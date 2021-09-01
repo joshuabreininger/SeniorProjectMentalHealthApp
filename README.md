@@ -11,16 +11,21 @@ Faculty Advisor:
 
 ## First Semester
 Plan (Sep 8):
+
 Milestone 1 (Oct 4):
+
 Milestone 2 (Nov 1):
+
 Milestone 3 (Nov 29):
 
 
 ## Second Semester
-
 Plan (Jan ?):
+
 Milestone 4 (Feb ?):
+
 Milestone 5 (Mar ?):
+
 Milestone 6 (Apr ?):
 
 
