@@ -1,13 +1,16 @@
 # SeniorProjectMentalHealthApp
 Project for Senior Design, Florida Institute of Technology
 
-Project Name:
-Team Members with Email Addresses:
+**Project Name:** The Mental Health App (Temporary Name)
+
+**Team Members with Email Addresses:**
+
 Joshua Breininger | jbreininger2018@my.fit.edu
+
 Phi Duong | pduong2018@my.fit.edu
 
 
-Faculty Advisor:
+**Faculty Advisor:**
 
 ## First Semester
 Plan (Sep 8):
