@@ -9,8 +9,13 @@ Joshua Breininger | jbreininger2018@my.fit.edu
 
 Phi Duong | pduong2018@my.fit.edu
 
+Daniel Bornemann | dbornemann2018@my.fit.edu
+
 
 **Faculty Advisor:**
+
+Philip Bernhard | pbernhar@fit.edu
+
 
 ## First Semester
 Plan (Sep 8):
