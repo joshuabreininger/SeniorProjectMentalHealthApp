@@ -18,7 +18,7 @@ Philip Bernhard | pbernhar@fit.edu
 
 
 ## First Semester
-Plan (Sep 8):
+Plan (Sep 8): https://docs.google.com/document/d/1IeEgbKmM26lvSlI4AmkODJFRWOkkOrdHBosrSo3Wh-o/edit?usp=sharing
 
 Milestone 1 (Oct 4):
 
