@@ -18,7 +18,7 @@ Philip Bernhard | pbernhar@fit.edu
 
 
 ## First Semester
-Plan (Sep 8): [Plan](https://docs.google.com/document/d/1IeEgbKmM26lvSlI4AmkODJFRWOkkOrdHBosrSo3Wh-o/edit?usp=sharing) | [Presentation](ProjectPlanPresentation)
+Plan (Sep 8): [Plan](https://docs.google.com/document/d/1IeEgbKmM26lvSlI4AmkODJFRWOkkOrdHBosrSo3Wh-o/edit?usp=sharing) | [Presentation](ProjectPlanPresentation.pdf)
 
 Milestone 1 (Oct 4): [Requirement Plan](RequirementPlan), [Design Plan](DesignPlan), [Test Plan](TestPlan), [Presentation](Milestone1Presentation), [Progress Evaluation](Milestone1ProgressEvaluation)
 
