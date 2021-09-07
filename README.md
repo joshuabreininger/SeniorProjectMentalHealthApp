@@ -1,4 +1,4 @@
-# SeniorProjectMentalHealthApp
+# Senior Project Mental Health App
 Project for Senior Design, Florida Institute of Technology
 
 **Project Name:** The Mental Health App (Temporary Name)
