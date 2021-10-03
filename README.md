@@ -20,7 +20,7 @@ Philip Bernhard | pbernhar@fit.edu
 ## First Semester
 Plan (Sep 8): [Plan](ProjectPlan.pdf) | [Presentation](ProjectPlanPresentation.pdf)
 
-Milestone 1 (Oct 4): [Requirement Plan](Software Requirements Specification.pdf), [Design Plan](Software Design Document.pdf), [Test Plan](Software Test Plan.pdf), [Presentation](Mental Health App Milestone 1.pdf), [Progress Evaluation](Milestone1ProgressEvaluation)
+Milestone 1 (Oct 4): [Requirement Plan](SoftwareRequirementsSpecification.pdf), [Design Plan](SoftwareDesignDocument.pdf), [Test Plan](SoftwareTestPlan.pdf), [Presentation](MentalHealthAppMilestone1.pdf), [Progress Evaluation](Milestone1ProgressEvaluation)
 
 Milestone 2 (Nov 1): [Presentation](Milestone2Presentation), [Progress Evaluation](Milestone2ProgressEvaluation)
 
