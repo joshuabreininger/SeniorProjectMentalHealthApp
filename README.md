@@ -22,7 +22,7 @@ Plan (Sep 8): [Plan](ProjectPlan.pdf) | [Presentation](ProjectPlanPresentation.p
 
 Milestone 1 (Oct 4): [Requirement Plan](SoftwareRequirementsSpecification.pdf), [Design Plan](SoftwareDesignDocument.pdf), [Test Plan](SoftwareTestPlan.pdf), [Presentation](MentalHealthAppMilestone1.pdf), [Progress Evaluation](Milestone1ProgressEvaluation.pdf)
 
-Milestone 2 (Nov 1): [Presentation](Milestone2Presentation), [Progress Evaluation](Milestone2ProgressEvaluation)
+Milestone 2 (Nov 1): [Presentation](https://docs.google.com/presentation/d/1onWvTHn2vfvFonMhzIDI8giGRQNys9oPjzGzgN_QlJA/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf)
 
 Milestone 3 (Nov 29): [Presentation](Milestone3Presentation), [Progress Evaluation](Milestone3ProgressEvaluation)
 
