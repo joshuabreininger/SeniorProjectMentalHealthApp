@@ -24,7 +24,7 @@ Milestone 1 (Oct 4): [Requirement Plan](SoftwareRequirementsSpecification.pdf), 
 
 Milestone 2 (Nov 1): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf)
 
-Milestone 3 (Nov 29): [Presentation](Milestone3Presentation), [Progress Evaluation](Milestone3ProgressEvaluation)
+Milestone 3 (Nov 29): [Presentation](https://docs.google.com/presentation/d/13vOy9c9GgDZ24IgyrzLa-3evg08krUe0POMyCmxBtNo/edit?usp=sharing), [Progress Evaluation](Milestone3ProgressEvaluation.pdf)
 
 
 ## Second Semester
