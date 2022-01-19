@@ -28,13 +28,13 @@ Milestone 3 (Nov 29): [Presentation](https://docs.google.com/presentation/d/13vO
 
 
 ## Second Semester
-Plan (Jan ?):
+Plan (Jan 19): [Plan](ProjectPlan.pdf) | [Presentation](ProjectPlanPresentation.pdf)
 
-Milestone 4 (Feb ?):
+Milestone 4 (Feb 14): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf)
 
-Milestone 5 (Mar ?):
+Milestone 5 (Mar 21): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf) [Poster] [E-Book Page]
 
-Milestone 6 (Apr ?):
+Milestone 6 (Apr 18): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf) [Demo Video] [User Manual]
 
 
 
