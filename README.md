@@ -32,9 +32,9 @@ Plan (Jan 19): [Plan](ProjectPlan.pdf) | [Presentation](ProjectPlanPresentation.
 
 Milestone 4 (Feb 14): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf)
 
-Milestone 5 (Mar 21): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf) [Poster] [E-Book Page]
+Milestone 5 (Mar 21): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf), [Poster](tempPoster), [E-Book Page](tempBook)
 
-Milestone 6 (Apr 18): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf) [Demo Video] [User Manual]
+Milestone 6 (Apr 18): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf), [Demo Video](tempVideo), [User Manual](tempManual)
 
 
 
