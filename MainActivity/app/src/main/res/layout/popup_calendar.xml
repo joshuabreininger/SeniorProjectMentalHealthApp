@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--<LinearLayout
+        android:layout_width="295dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="106.5dp"
+        android:layout_marginEnd="3dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/calendarView"
+        app:layout_constraintStart_toStartOf="@+id/calendarView"
+        app:layout_constraintTop_toTopOf="@+id/calendarView">
+
+        <ImageView
+            android:id="@+id/day1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="295dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="146.5dp"
+        android:layout_marginEnd="3dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/calendarView"
+        app:layout_constraintStart_toStartOf="@+id/calendarView"
+        app:layout_constraintTop_toTopOf="@+id/calendarView">
+
+        <ImageView
+            android:id="@+id/day8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="295dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="186dp"
+        android:layout_marginEnd="3dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/calendarView"
+        app:layout_constraintStart_toStartOf="@+id/calendarView"
+        app:layout_constraintTop_toTopOf="@+id/calendarView">
+
+        <ImageView
+            android:id="@+id/day15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="295dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="226dp"
+        android:layout_marginEnd="3dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/calendarView"
+        app:layout_constraintStart_toStartOf="@+id/calendarView"
+        app:layout_constraintTop_toTopOf="@+id/calendarView">
+
+        <ImageView
+            android:id="@+id/day22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day23"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day26"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day27"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="295dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="266.5dp"
+        android:layout_marginEnd="3dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/calendarView"
+        app:layout_constraintStart_toStartOf="@+id/calendarView"
+        app:layout_constraintTop_toTopOf="@+id/calendarView">
+
+        <ImageView
+            android:id="@+id/day29"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day31"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day32"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day33"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day34"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/day35"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+    </LinearLayout>-->
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:mcv_selectionColor="#00F"
+        app:mcv_showOtherDates="all" />
+
+    <Button
+        android:id="@+id/CalBackBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="476dp"
+        android:text="Back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

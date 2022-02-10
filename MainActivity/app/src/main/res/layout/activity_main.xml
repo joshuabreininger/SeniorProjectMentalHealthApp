@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="388dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="311dp"
+        android:text="       Team Sudo Woodo"
+        android:textColor="@color/purple_200"
+        android:textColorHighlight="@color/teal_200"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLog"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ListView
+        android:id="@+id/listViewID"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="191dp" />
+
+    <ImageView
+        android:id="@+id/testImageAdventure"
+        android:layout_width="308dp"
+        android:layout_height="223dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/dailyScenarioText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/testpicturegameart" />
+
+    <Button
+        android:id="@+id/buttonLog"
+        android:layout_width="234dp"
+        android:layout_height="139dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="516dp"
+        android:backgroundTint="#0052cc"
+        android:text="Log All-in-one"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/buttonGraph"
+        android:layout_width="111dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="264dp"
+        android:layout_marginTop="516dp"
+        android:backgroundTint="#ff3333"
+        android:text="Graphs"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/buttonSettings"
+        android:layout_width="111dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="264dp"
+        android:layout_marginTop="588dp"
+        android:backgroundTint="#009973"
+        android:text="Settings"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/buttonViewAdventure"
+        android:layout_width="208dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="448dp"
+        android:backgroundTint="#8533ff"
+        android:text="View Adventure Log"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/dailyScenarioText"
+        android:layout_width="308dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="4dp"
+        android:text="Sample Scenario Text Here"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonViewAdventure"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <TextView
+        android:id="@+id/calendarMiniView"
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="56dp"
+        android:clickable="true"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:text="S  M  T  W  T  F  S\n1  2  3  4  5  6  7"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/prevDay"
+        android:layout_width="19dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="4dp"
+        android:text="&lt;"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toStartOf="@+id/calendarMiniView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/nextDay"
+        android:layout_width="19dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="64dp"
+        android:text="&gt;"
+        android:textSize="34sp"
+        app:layout_constraintStart_toEndOf="@+id/calendarMiniView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/monthTextView"
+        android:layout_width="218dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:clickable="false"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="TextView"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="257dp"
+        android:layout_height="7dp"
+        android:layout_marginTop="118dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/SunDot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/MonDot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/TueDot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/WedDot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/ThuDot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/FriDot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+        <ImageView
+            android:id="@+id/SatDot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/input_dot" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

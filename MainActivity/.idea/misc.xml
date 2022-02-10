@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/a.xml" value="0.35052083333333334" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/list_row.xml" value="0.22" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup.xml" value="0.22" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popupSettings.xml" value="0.28125" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_adventure_log.xml" value="0.296875" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_exercise.xml" value="0.3067708333333333" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_food.xml" value="0.3067708333333333" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_graphs.xml" value="0.296875" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_mood.xml" value="0.296875" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_settings.xml" value="0.28125" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/mipmap-anydpi-v26/ic_launcherr.png.xml" value="0.2609375" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/drawable/ic_baseline_elderly_24.xml" value="0.2921875" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2921875" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/drawable/input_dot.xml" value="0.2921875" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_adventure_log.xml" value="0.335" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_calendar.xml" value="0.375" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_exercise.xml" value="0.19021739130434784" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_food.xml" value="0.2269021739130435" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_graphs.xml" value="0.25" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_mood.xml" value="0.19021739130434784" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
