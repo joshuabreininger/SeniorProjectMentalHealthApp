@@ -1,38 +1,28 @@
 package com.example.mainactivity;
 
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
-import android.media.Image;
-import android.media.metrics.Event;
+import android.os.Build;
+import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.os.Bundle;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.mainactivity.Data.DataBaseHandler;
-import com.example.mainactivity.Model.Item;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
@@ -43,6 +33,10 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -90,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
     //log all-in-one exercise menu variables
     private Button exercise_button_ok, exercise_button_skip;
     private EditText exerciseInput_edittext;
+
+
 
 
     //unused test popup
@@ -488,6 +484,7 @@ public class MainActivity extends AppCompatActivity {
         //gets and shows the main screen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         listview = findViewById(R.id.listViewID);
 
         //main screen buttons
@@ -509,6 +506,27 @@ public class MainActivity extends AppCompatActivity {
         settings_button = (Button) findViewById(R.id.buttonSettings);
         graphs_button = (Button) findViewById(R.id.buttonGraph);
         adventure_log_button = (Button) findViewById(R.id.buttonViewAdventure);
+
+        //calls the notification creation function
+        createNotificationChannel();
+
+        //set the intent of the notification to be used when building it (what happens when you click it)
+        Intent notifIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notifIntent, 0);
+
+        //notification builder
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "testChannel")
+                .setSmallIcon(R.drawable.input_dot)
+                .setContentTitle("Test Notification")
+                .setContentText("This is a test notification.")
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        //notification manager
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        //calls the notification
+        notificationManager.notify(100, builder.build());
 
         //click listener for changing calender
         monthView.setOnClickListener(new View.OnClickListener() {
@@ -561,6 +579,22 @@ public class MainActivity extends AppCompatActivity {
 
         updateDateTime();
         updateCalendarView();
+    }
+
+    private void createNotificationChannel() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "testNotification";
+            String description = "A test notification.";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("testChannel", name, importance);
+            channel.setDescription(description);
+
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override
