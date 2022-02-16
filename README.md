@@ -30,7 +30,7 @@ Milestone 3 (Nov 29): [Presentation](https://docs.google.com/presentation/d/13vO
 ## Second Semester
 Plan (Jan 19): [Plan](Semester2Plan.pdf) | [Presentation](Semester2Presentation.pdf)
 
-Milestone 4 (Feb 14): [Presentation](https://docs.google.com/presentation/d/1-K5UJV0aXobb_6S3ctPf4icq8JHnZ3P9N8Wp0Z7nnB0/edit#slide=id.gcf9a6f402b_2_5), [Progress Evaluation](Milestone4ProgressEvaluation.pdf)
+Milestone 4 (Feb 14): [Presentation](https://docs.google.com/presentation/d/1-K5UJV0aXobb_6S3ctPf4icq8JHnZ3P9N8Wp0Z7nnB0/edit#slide=id.gcf9a6f402b_2), [Progress Evaluation](Milestone4ProgressEvaluation.pdf)
 
 Milestone 5 (Mar 21): [Presentation](https://docs.google.com/presentation/d/1-K5UJV0aXobb_6S3ctPf4icq8JHnZ3P9N8Wp0Z7nnB0/edit#slide=id.gcf9a6f402b_2_5), [Progress Evaluation](Milestone2ProgressEvaluation.pdf), [Poster](tempPoster), [E-Book Page](tempBook)
 
