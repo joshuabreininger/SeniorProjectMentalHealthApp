@@ -32,7 +32,7 @@ Plan (Jan 19): [Plan](Semester2Plan.pdf) | [Presentation](Semester2Presentation.
 
 Milestone 4 (Feb 14): [Presentation](https://docs.google.com/presentation/d/1-K5UJV0aXobb_6S3ctPf4icq8JHnZ3P9N8Wp0Z7nnB0/edit#slide=id.gcf9a6f402b_2), [Progress Evaluation](Milestone4ProgressEvaluation.pdf)
 
-Milestone 5 (Mar 21): [Presentation](https://docs.google.com/presentation/d/1-K5UJV0aXobb_6S3ctPf4icq8JHnZ3P9N8Wp0Z7nnB0/edit#slide=id.gcf9a6f402b_2_5), [Progress Evaluation](Milestone2ProgressEvaluation.pdf), [Poster](https://docs.google.com/presentation/d/191155tAHzb6ejTnrCqPH7O54MMoJIZmd/edit#slide=id.p1), [E-Book Page](https://docs.google.com/document/d/1v-mKCEpQHS6yEql7V8jmJ6O1Xli5t1y1/edit)
+Milestone 5 (Mar 21): [Presentation](https://docs.google.com/presentation/d/1-K5UJV0aXobb_6S3ctPf4icq8JHnZ3P9N8Wp0Z7nnB0/edit#slide=id.gcf9a6f402b_2_5), [Progress Evaluation](Milestone5ProgressEvaluation.pdf), [Poster](https://docs.google.com/presentation/d/191155tAHzb6ejTnrCqPH7O54MMoJIZmd/edit#slide=id.p1), [E-Book Page](https://docs.google.com/document/d/1v-mKCEpQHS6yEql7V8jmJ6O1Xli5t1y1/edit)
 
 Milestone 6 (Apr 18): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf), [Demo Video](tempVideo), [User Manual](tempManual)
 
