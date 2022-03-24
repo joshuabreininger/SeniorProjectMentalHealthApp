@@ -7,10 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-//item was red so i imported this idk if its right
-import com.example.mainactivity.Model.Item;
-
 import java.util.ArrayList;
+
+//item was red so i imported this idk if its right
 
 public class DataBaseHandler extends SQLiteOpenHelper {
 
@@ -32,15 +31,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         /*
-        String SQLITETUTORIALTABLE = "CREATE TABLE " +
-                Constants.TABLE_NAME + " (" +
-                Constants.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                Constants.DATABASE_EDITTEXT + " STRING);";
-
-        db.execSQL(SQLITETUTORIALTABLE);
+        String OBJECTTABLE = "CREATE TABLE objecttable(" +
+                "Object_ID INTEGER, " +
+                "Object_PATH varchar(20), " +
+                "PRIMARY KEY (Object_ID));";
         */
+        String SCENARIOTABLE = "CREATE TABLE scenariotable(" +
+                "Object_ID INTEGER, " +
+                "Scenario_ID INTEGER, " +
+                "Scenario varchar(40), " +
+                //"FOREIGN KEY (Object_ID) REFERENCES OBJECTTABLE (Object_ID), " +
+                "PRIMARY KEY (Object_ID, Scenario_ID));";
 
         String AVERAGEFOOD = "CREATE TABLE " +
                 Constants.TABLE_NAME_FOOD + " (" +
@@ -84,10 +86,24 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "Av_Exercise REAL, " +
                 "Av_Mood REAL);";
 
+        //db.execSQL(OBJECTTABLE);
+        db.execSQL(SCENARIOTABLE);
         db.execSQL(AVERAGEFOOD);
         db.execSQL(DAYTABLE);
         db.execSQL(MONTHTABLE);
         db.execSQL(YEARTABLE);
+
+        /*
+        String temp = "INSERT INTO objecttable" +
+                "(Object_ID, Object_Path)" +
+                "VALUES" +
+                "(2, 'bg1.png');";
+
+        db.execSQL(temp);*/
+
+        String input = "INSERT OR REPLACE INTO SCENARIOTABLE ( Object_ID, Scenario_ID, Scenario) VALUES (0, 0, \"Player has found Player\");";
+        db.execSQL(input);
+
     }//MAKE SURE TO DELETE THE DATABASE AGAIN BEFORE I DO THIS SINCE I HAVE THE APP OPEN WITH THE OLDER BUILD
 
     @Override
@@ -142,7 +158,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }catch (Exception e){
             Log.i("TESTDB",e.toString());
         }
-        db.close();
+        //db.close();
         return exist;
     }
 
@@ -186,7 +202,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String input = "INSERT OR REPLACE INTO " + Constants.TABLE_NAME_DAY +
                 " (" + columns + ") " + " VALUES(" + values + ");";
         db.execSQL(input);
-        db.close();
+        //db.close();
     }
 
     public static boolean isNumeric(String str) {
@@ -214,11 +230,25 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        cursor.close();
-        db.close();
+       //cursor.close();
+       //db.close();
 
         return db_list;
 
+    }
+
+    public String[] getDailyScenario() {
+        String[] input  = new String[2];
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM scenariotable ORDER BY RANDOM() LIMIT 1", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                input[0] = cursor.getString(cursor.getColumnIndexOrThrow("Object_ID"));
+                input[1] = cursor.getString(cursor.getColumnIndexOrThrow("Scenario"));
+            } while (cursor.moveToNext());
+        }
+        return input;
     }
 /*
     //Never implemented, didnt get to part 5 of funny british man video
