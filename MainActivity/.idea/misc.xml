@@ -6,10 +6,13 @@
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/drawable/input_dot.xml" value="0.309375" />
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/a.xml" value="0.35052083333333334" />
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/activity_main2.xml" value="0.22" />
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/list_row.xml" value="0.22" />
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup.xml" value="0.22" />
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popupSettings.xml" value="0.28125" />
-        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_adventure_log.xml" value="0.296875" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_adventure_log.xml" value="0.22" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_adventure_scenario.xml" value="0.2273148148148148" />
+        <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_calendar.xml" value="0.26064814814814813" />
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_exercise.xml" value="0.3067708333333333" />
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_food.xml" value="0.3067708333333333" />
         <entry key="..\:/Users/chees/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_graphs.xml" value="0.296875" />

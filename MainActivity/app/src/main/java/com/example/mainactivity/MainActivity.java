@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.mainactivity.Data.Constants;
 import com.example.mainactivity.Data.DataBaseHandler;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -85,8 +86,10 @@ public class MainActivity extends AppCompatActivity {
     private Button exercise_button_ok, exercise_button_skip;
     private EditText exerciseInput_edittext;
 
-
-
+    //adventure scenario variables
+    private Button adventure_scenario_close;
+    private ImageView scenario_bg1, scenario_bg2, scenario_bg3, scenario_bg4, scenario_bg5, scenario_bg6, opponent;
+    private TextView scenario_text;
 
     //unused test popup
     public void createNewContactDialog(){
@@ -261,6 +264,8 @@ public class MainActivity extends AppCompatActivity {
                 //refreshdata();
 
                 dialog.dismiss();
+
+                generateScenario();
             }
         });
 
@@ -269,8 +274,84 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick (View v) {
                 dialog.dismiss();
+
+                generateScenario();
             }
         });
+    }
+
+    public void generateScenario(){
+        //gets the layout of the adventure scenario
+        final View scenarioMenuView = getLayoutInflater().inflate(R.layout.popup_adventure_scenario, null);
+
+        //creates and shows the popup
+        dialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault);
+        dialogBuilder.setView(scenarioMenuView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        //accounting for the month
+        int monthCheck = currCal.get(Calendar.MONTH);
+        scenario_text = (TextView) scenarioMenuView.findViewById(R.id.scenarioText);
+        opponent = (ImageView) scenarioMenuView.findViewById(R.id.opponent);
+
+        scenario_bg1 = (ImageView) scenarioMenuView.findViewById(R.id.testBG1);
+        scenario_bg2 = (ImageView) scenarioMenuView.findViewById(R.id.testBG2);
+        scenario_bg3 = (ImageView) scenarioMenuView.findViewById(R.id.testBG3);
+        scenario_bg4 = (ImageView) scenarioMenuView.findViewById(R.id.testBG4);
+        scenario_bg5 = (ImageView) scenarioMenuView.findViewById(R.id.testBG5);
+        scenario_bg6 = (ImageView) scenarioMenuView.findViewById(R.id.testBG6);
+        scenario_bg1.setAlpha(0f);
+        scenario_bg2.setAlpha(0f);
+        scenario_bg3.setAlpha(0f);
+        scenario_bg4.setAlpha(0f);
+        scenario_bg5.setAlpha(0f);
+        scenario_bg6.setAlpha(0f);
+
+        if (monthCheck >= 0 && monthCheck <= 1) {
+            scenario_bg1.setAlpha(1f);
+            scenario_text.setTextColor(Color.BLACK);
+        }
+        else if (monthCheck >= 2 && monthCheck <= 3) {
+            scenario_bg2.setAlpha(1f);
+            scenario_text.setTextColor(Color.WHITE);
+        }
+        else if (monthCheck >= 4 && monthCheck <= 5) {
+            scenario_bg3.setAlpha(1f);
+            scenario_text.setTextColor(Color.BLACK);
+        }
+        else if (monthCheck >= 6 && monthCheck <= 7) {
+            scenario_bg4.setAlpha(1f);
+            scenario_text.setTextColor(Color.BLACK);
+        }
+        else if (monthCheck >= 8 && monthCheck <= 9) {
+            scenario_bg5.setAlpha(1f);
+            scenario_text.setTextColor(Color.BLACK);
+        }
+        else if (monthCheck >= 10 && monthCheck <= 11) {
+            scenario_bg6.setAlpha(1f);
+            scenario_text.setTextColor(Color.WHITE);
+        }
+
+        //grab the scenario
+        String[] scenario = db.getDailyScenario();
+
+        //set the text to the scenario and the opponent image
+        scenario_text.setText(scenario[1]);
+        Constants c = new Constants();
+        opponent.setImageResource(c.getImageByID(Integer.parseInt(scenario[0])));
+
+        //close button for the adventure scenario popup
+        adventure_scenario_close = (Button) scenarioMenuView.findViewById(R.id.closeButton);
+
+        //click listener for the adventure scenario close button
+        adventure_scenario_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                dialog.dismiss();
+            }
+        });
+
     }
 
     //function called when opening the settings menu, opens the setting menu
@@ -373,13 +454,16 @@ public class MainActivity extends AppCompatActivity {
     //function called when opening the adventure log, opens the adventure log
     public void openAdventureLog(){
         ArrayList<String> datasetTypes = db.getDatasetTypes();
+
         //gets the layout of the adventure log
         final View graphsMenuView = getLayoutInflater().inflate(R.layout.popup_adventure_log, null);
+
         //creates and shows the popup
-        dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault);
         dialogBuilder.setView(graphsMenuView);
         dialog = dialogBuilder.create();
         dialog.show();
+
         ArrayList<String> output;
         try {
             output = db.getallItems(datasetTypes);
@@ -481,6 +565,7 @@ public class MainActivity extends AppCompatActivity {
         dataSetTypes = new ArrayList<>();
         items = new ArrayList<>();
         db = new DataBaseHandler(getApplicationContext());
+
         //gets and shows the main screen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -579,6 +664,64 @@ public class MainActivity extends AppCompatActivity {
 
         updateDateTime();
         updateCalendarView();
+
+        int monthCheck = currCal.get(Calendar.MONTH);
+
+        ImageView bg1 = (ImageView) findViewById(R.id.testBG1);
+        ImageView bg2 = (ImageView) findViewById(R.id.testBG2);
+        ImageView bg3 = (ImageView) findViewById(R.id.testBG3);
+        ImageView bg4 = (ImageView) findViewById(R.id.testBG4);
+        ImageView bg5 = (ImageView) findViewById(R.id.testBG5);
+        ImageView bg6 = (ImageView) findViewById(R.id.testBG6);
+        bg1.setAlpha(0f);
+        bg2.setAlpha(0f);
+        bg3.setAlpha(0f);
+        bg4.setAlpha(0f);
+        bg5.setAlpha(0f);
+        bg6.setAlpha(0f);
+
+        if (monthCheck >= 0 && monthCheck <= 1) {
+            bg1.setAlpha(1f);
+            prevDay.setTextColor(Color.BLACK);
+            nextDay.setTextColor(Color.BLACK);
+            monthView.setTextColor(Color.BLACK);
+            CalendarView.setTextColor(Color.BLACK);
+        }
+        else if (monthCheck >= 2 && monthCheck <= 3) {
+            bg2.setAlpha(1f);
+            prevDay.setTextColor(Color.WHITE);
+            nextDay.setTextColor(Color.WHITE);
+            monthView.setTextColor(Color.WHITE);
+            CalendarView.setTextColor(Color.WHITE);
+        }
+        else if (monthCheck >= 4 && monthCheck <= 5) {
+            bg3.setAlpha(1f);
+            prevDay.setTextColor(Color.BLACK);
+            nextDay.setTextColor(Color.BLACK);
+            monthView.setTextColor(Color.BLACK);
+            CalendarView.setTextColor(Color.BLACK);
+        }
+        else if (monthCheck >= 6 && monthCheck <= 7) {
+            bg4.setAlpha(1f);
+            prevDay.setTextColor(Color.BLACK);
+            nextDay.setTextColor(Color.BLACK);
+            monthView.setTextColor(Color.BLACK);
+            CalendarView.setTextColor(Color.BLACK);
+        }
+        else if (monthCheck >= 8 && monthCheck <= 9) {
+            bg5.setAlpha(1f);
+            prevDay.setTextColor(Color.BLACK);
+            nextDay.setTextColor(Color.BLACK);
+            monthView.setTextColor(Color.BLACK);
+            CalendarView.setTextColor(Color.BLACK);
+        }
+        else if (monthCheck >= 10 && monthCheck <= 11) {
+            bg6.setAlpha(1f);
+            prevDay.setTextColor(Color.WHITE);
+            nextDay.setTextColor(Color.WHITE);
+            monthView.setTextColor(Color.WHITE);
+            CalendarView.setTextColor(Color.WHITE);
+        }
     }
 
     private void createNotificationChannel() {
