@@ -1,5 +1,7 @@
 package com.example.mainactivity;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
@@ -8,28 +10,39 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.media.Image;
+import android.media.metrics.Event;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import com.example.mainactivity.Data.DataBaseHandler;
+import com.example.mainactivity.Model.Item;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.mainactivity.Data.Constants;
-import com.example.mainactivity.Data.DataBaseHandler;
-import com.github.mikephil.charting.charts.PieChart;
+import com.example.mainactivity.Model.Item;
+import java.util.Date;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -47,7 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<String> items;
 
-    private PieChart pieChart;
+    private BarChart dayBarChart;
+    private BarChart weekBarChart;
+    private BarChart monthBarChart;
+    private BarChart yearBarChart;
+    private int chartIndex;
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -69,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     private Button settings_button, settings_button_close;
 
     //graphs menu variables
-    private Button graphs_button, graphs_button_close;
+    private Button graphs_button, graphs_button_close, graphs_button_change;
 
     //adventure log variables
     private Button adventure_log_button, adventure_log_button_close;
@@ -114,6 +131,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    // This opens the calendar menu
+    // the user can see a list of dates in a month and can change the month with the arrows on the side
+    // Here the user can select a date and confirm it by selecting the back button
+    // once a date is selected, the calendar view changes to match the week
+    */
+    // creates the calenar view
     public void openCalendarMenu(){
         final View calendarMenuView = getLayoutInflater().inflate(R.layout.popup_calendar,null);
         dialogBuilder = new AlertDialog.Builder(this);
@@ -133,11 +157,11 @@ public class MainActivity extends AppCompatActivity {
         MaterialCalendarView calView = (MaterialCalendarView) calendarMenuView.findViewById(R.id.calendarView);
 
         calView.setOnDateChangedListener(new OnDateSelectedListener() {
-             @Override
-             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                 currCal.set(date.getYear(), date.getMonth(), date.getDay());
-             }
-         });
+            @Override
+            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+                currCal.set(date.getYear(), date.getMonth(), date.getDay());
+            }
+        });
 
         Button backButton = (Button) calendarMenuView.findViewById(R.id.CalBackBtn);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    // opens the mood menus for the user to input their daily information
+     */
     //function called when clicking the log all-in-one button, opens the mood menu
     public void openMoodMenu(){
         dataSetTypes.clear();
@@ -354,6 +381,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    /*
+    // shows the settings menu
+    */
     //function called when opening the settings menu, opens the setting menu
     public void openSettingsMenu(){
 
@@ -378,111 +409,240 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void openGraphsMenu(){
-
+    /*
+    // loads the graph to show the daily,weekly, and yearly progress of the user based on their inputs
+     */
+    public void openGraphsMenu(boolean addPopup){
+        ArrayList<String> chartList = db.getGraphTypes();
         //gets the layout of the graphs menu
         final View graphsMenuView = getLayoutInflater().inflate(R.layout.popup_graphs, null);
 
         //creates and shows the popup
-        dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setView(graphsMenuView);
-        dialog = dialogBuilder.create();
-        dialog.show();
+        if(addPopup) {
+            dialogBuilder = new AlertDialog.Builder(this);
+            dialogBuilder.setView(graphsMenuView);
+            dialog = dialogBuilder.create();
+            dialog.show();
 
-        pieChart = graphsMenuView.findViewById(R.id.piechart);
-        setupPieChart();
-        loadPirChartData();
+            //close button for the graphs menu
+            graphs_button_close = (Button) graphsMenuView.findViewById(R.id.closeButton);
+            graphs_button_change = (Button) graphsMenuView.findViewById(R.id.changegraphbutton);
+            graphs_button_change.setText(chartList.get(chartIndex));
 
-        //close button for the graohs menu
-        graphs_button_close = (Button) graphsMenuView.findViewById(R.id.closeButton);
+            //click listener for the graphs menu close button
+            graphs_button_close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick (View v) {
+                    dialog.dismiss();
+                }
+            });
+            //changes between the different labels of the graph
+            graphs_button_change.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick (View v) {
+                    ArrayList<String> list = db.getGraphTypes();
+                    chartIndex = (chartIndex + 1)% list.size();
+                    graphs_button_change.setText(chartList.get(chartIndex));
+                    openGraphsMenu(false);
+                }
+            });
 
-        //click listener for the graphs menu close button
-        graphs_button_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View v) {
-                dialog.dismiss();
+            dayBarChart = graphsMenuView.findViewById(R.id.daybarchart);
+            weekBarChart = graphsMenuView.findViewById(R.id.weekbarchart);
+            monthBarChart = graphsMenuView.findViewById(R.id.monthbarchart);
+            yearBarChart = graphsMenuView.findViewById(R.id.yearbarchart);
+            dayBarChart.getAxisLeft().setDrawGridLines(false);
+            weekBarChart.getAxisLeft().setDrawGridLines(false);
+            monthBarChart.getAxisLeft().setDrawGridLines(false);
+            yearBarChart.getAxisLeft().setDrawGridLines(false);
+            dayBarChart.getAxisRight().setDrawGridLines(false);
+            weekBarChart.getAxisRight().setDrawGridLines(false);
+            monthBarChart.getAxisRight().setDrawGridLines(false);
+            yearBarChart.getAxisRight().setDrawGridLines(false);
+        }
+        loadDayBarChartData(chartList.get(chartIndex));
+        loadWeekBarChartData(chartList.get(chartIndex));
+        loadMonthBarCharData(chartList.get(chartIndex));
+        loadYearBarChartData(chartList.get(chartIndex));
+    }
+
+    private void loadDayBarChartData(String setting){
+        String Days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        XAxis xaxis = dayBarChart.getXAxis();
+        xaxis.setValueFormatter(new IndexAxisValueFormatter(Days));
+        xaxis.setCenterAxisLabels(true);
+        xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xaxis.setGranularity(1);
+        xaxis.setGranularityEnabled(true);
+        xaxis.setDrawGridLines(false);
+
+        ArrayList<BarEntry> values = new ArrayList<>();
+        //ArrayList<String> graphList = db.getGraphTypes();
+        ArrayList<String> graphList = new ArrayList<>();
+        graphList.add(setting);
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        for(String type : graphList) {
+            Calendar thisWeek = currCal;
+            thisWeek.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            for (int i = 0; i < 7; i++) {
+                thisWeek.set(Calendar.DAY_OF_WEEK, i + 1);
+                int day = thisWeek.get(Calendar.DAY_OF_MONTH);
+                int month = thisWeek.get(Calendar.MONTH);
+                int year = thisWeek.get(Calendar.YEAR);
+                ArrayList temp = new ArrayList();
+                temp.add(type);
+                ArrayList<String> out = db.getItemByDay(temp, day, month, year);
+                float x = i;
+                float y = 0;
+                try {
+                    y = Float.parseFloat(out.get(0));
+                } catch( Exception e){ }
+                values.add(new BarEntry(x, y));
             }
-        });
-    }
-
-    private void setupPieChart(){
-        pieChart.setDrawHoleEnabled(true);
-        pieChart.setUsePercentValues(true);
-        pieChart.setEntryLabelTextSize(10);
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setCenterText("Intake by Food Category");
-        pieChart.setCenterTextSize(16);
-        pieChart.getDescription().setEnabled(false);
-
-        Legend l = pieChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-        l.setEnabled(true);
-    }
-
-    private void loadPirChartData(){
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(0.2f, "Vegetables"));
-        entries.add(new PieEntry(0.15f, "High Sugar"));
-        entries.add(new PieEntry(0.35f, "Fruit"));
-        entries.add(new PieEntry(0.3f, "Meat"));
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        for (int color: ColorTemplate.MATERIAL_COLORS){
-            colors.add(color);
+            BarDataSet set = new BarDataSet(values, "Daily " + type);
+            set.setColor(getGraphColor(type));
+            set.setDrawValues(false);
+            dataSets.add(set);
         }
 
-        for (int color: ColorTemplate.VORDIPLOM_COLORS){
-            colors.add(color);
+        BarData data = new BarData(dataSets);
+        data.setValueTextSize(12f);
+        dayBarChart.setData(data);
+        dayBarChart.invalidate();
+    }
+
+    private void loadWeekBarChartData(String setting){
+        String Days[] = {"Wk1", "Wk2", "Wk3", "Wk4"};
+        XAxis xaxis = weekBarChart.getXAxis();
+        xaxis.setValueFormatter(new IndexAxisValueFormatter(Days));
+        xaxis.setCenterAxisLabels(true);
+        xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xaxis.setGranularity(1);
+        xaxis.setGranularityEnabled(true);
+        xaxis.setDrawGridLines(false);
+
+        String[] moodList = db.getItemsByMonth(setting,currCal.get(Calendar.MONTH),currCal.get(Calendar.YEAR));
+        ArrayList<BarEntry> values = new ArrayList<>();
+        for (int i=0; i<4; i++){
+            float sum = 0;
+            int count = 0;
+            for(int j=0;j<7;j++){
+                if(moodList[i * 7 + j] != null) {
+                    sum += Integer.parseInt(moodList[i * 7 + j]);
+                    count++;
+                }
+            }
+            float avg = 0;
+            if (count >0){
+                avg = sum/count;
+            }
+            values.add(new BarEntry(i, avg));
+        }
+        BarDataSet set1 = new BarDataSet(values, "Average Weekly " + setting);
+        set1.setColor(getGraphColor(setting));
+        set1.setDrawValues(false);
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
+
+        BarData data = new BarData(dataSets);
+        data.setValueTextSize(12f);
+        weekBarChart.setData(data);
+        weekBarChart.invalidate();
+    }
+
+    private void loadMonthBarCharData(String setting){
+        String Days[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        XAxis xaxis = monthBarChart.getXAxis();
+        xaxis.setValueFormatter(new IndexAxisValueFormatter(Days));
+        xaxis.setCenterAxisLabels(true);
+        xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xaxis.setGranularity(1);
+        xaxis.setGranularityEnabled(true);
+        xaxis.setDrawGridLines(false);
+
+        String[] moodList = db.getAvgMonthInYear(setting,currCal.get(Calendar.YEAR));
+        ArrayList<BarEntry> values = new ArrayList<>();
+        for (int i=0; i<12; i++){
+            float val = 0;
+            if(moodList[i] != null && !moodList[i].equals("")){
+                val = Float.parseFloat(moodList[i]);
+            }
+            values.add(new BarEntry(i, val));
+        }
+        BarDataSet set1 = new BarDataSet(values, "Average Monthly " + setting);
+        set1.setColor(getGraphColor(setting));
+        set1.setDrawValues(false);
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
+
+        BarData data = new BarData(dataSets);
+        data.setValueTextSize(12f);
+        monthBarChart.setData(data);
+        monthBarChart.invalidate();
+    }
+
+    private void loadYearBarChartData(String setting){
+        int year = currCal.get(Calendar.YEAR);
+        String Days[] = new String[7];
+        for (int i=6; i>=0; i--){
+            Days[i] = (year - i) + "";
         }
 
-        PieDataSet dataSet = new PieDataSet(entries, "Food Intake");
-        dataSet.setColors(colors);
+        XAxis xaxis = yearBarChart.getXAxis();
+        xaxis.setValueFormatter(new IndexAxisValueFormatter(Days));
+        xaxis.setCenterAxisLabels(true);
+        xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xaxis.setGranularity(1);
+        xaxis.setGranularityEnabled(true);
+        xaxis.setDrawGridLines(false);
 
-        PieData data = new PieData(dataSet);
-        data.setDrawValues(true);
-        data.setValueFormatter(new PercentFormatter(pieChart));
-        data.setValueTextSize(10f);
-        data.setValueTextColor(Color.BLACK);
+        String[] moodList = db.getAvgYearList(setting,currCal.get(Calendar.YEAR), 7);
+        ArrayList<BarEntry> values = new ArrayList<>();
+        for (int i=0; i < 7; i++){
+            float val = 0;
+            if(moodList[i] != null && !moodList[i].equals("")){
+                val = Float.parseFloat(moodList[i]);
+            }
+            values.add(new BarEntry(i, val));
+        }
+        BarDataSet set1 = new BarDataSet(values, "Average Yearly " + setting);
+        set1.setColor(getGraphColor(setting));
+        set1.setDrawValues(false);
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
 
-        pieChart.setData(data);
-        pieChart.invalidate();
+        BarData data = new BarData(dataSets);
+        data.setValueTextSize(12f);
+        yearBarChart.setData(data);
+        yearBarChart.invalidate();
     }
 
     //function called when opening the adventure log, opens the adventure log
     public void openAdventureLog(){
         ArrayList<String> datasetTypes = db.getDatasetTypes();
-
         //gets the layout of the adventure log
         final View graphsMenuView = getLayoutInflater().inflate(R.layout.popup_adventure_log, null);
-
         //creates and shows the popup
-        dialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault);
+        dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(graphsMenuView);
         dialog = dialogBuilder.create();
         dialog.show();
-
-        ArrayList<String> output;
-        try {
-            output = db.getallItems(datasetTypes);
-        }
-        catch(Exception e){
-            output = new ArrayList<>();
-        }
         String text = "";
-        for (int k = 0; k < output.size();) {
-            for (int i = 0; i < datasetTypes.size(); i++,k++) {
-                text += datasetTypes.get(i) + ": ";
-                text += output.get(k) + "\n";
+
+        int day = currCal.get(Calendar.DAY_OF_MONTH);
+        int month = currCal.get(Calendar.MONTH);
+        int year = currCal.get(Calendar.YEAR);
+        ArrayList<String> output = db.getItemByDay(datasetTypes, day, month, year);
+        for(int i =0; i<output.size(); i++){
+            if(output.get(i) != null && !output.get(i).equals("")) {
+                text += datasetTypes.get(i) + ": " + output.get(i) + "\n";
             }
         }
         if(text == ""){
             text = "No Data Available";
         }
 
-        TextView databaseOut= (TextView) graphsMenuView.findViewById(R.id.logview);
+        TextView databaseOut = (TextView) graphsMenuView.findViewById(R.id.logview);
         databaseOut.setText(text);
 
         //close button for the adventure log
@@ -497,6 +657,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    // updates the week label to match the current date or the date selected
     public void updateCalendarView(){
         final int numSpace = 4;
         TextView tvdays = (TextView) findViewById(R.id.calendarMiniView);
@@ -508,14 +670,12 @@ public class MainActivity extends AppCompatActivity {
         String dayNums = "";
 
         int day = currCal.get(Calendar.DAY_OF_MONTH);
-        int startDate, endDate = 0;
 
         //formatting for the days of the week
         String month = currCal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
         Calendar thisWeek = Calendar.getInstance();
         thisWeek.setTime(currCal.getTime());
         thisWeek.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        startDate = thisWeek.get(Calendar.DAY_OF_MONTH);
         //loops through the week
         for(int i = Calendar.SUNDAY; i <= Calendar.SATURDAY; i++) {
             thisWeek.set(Calendar.DAY_OF_WEEK, i);
@@ -532,7 +692,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else {
-                endDate = thisWeek.get(Calendar.DAY_OF_MONTH);
                 dayNums += html;
                 if (thisWeek.get(Calendar.DAY_OF_MONTH) >= 10) {
                     weekNames += "&nbsp;";
@@ -544,19 +703,23 @@ public class MainActivity extends AppCompatActivity {
         tvdays.setText(Html.fromHtml( weekNames + "<br>" + dayNums));
         tvMonths.setText(month);
 
-        //adds in the dots
-        /*thisWeek.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        //adds in the indicators for the week
         int tempMonth = thisWeek.get(Calendar.MONTH);
         int tempYear = thisWeek.get(Calendar.YEAR);
-        Boolean[] filledDates = db.getDaysOfWeekFilled(startDate, endDate, tempMonth, tempYear);
         for (int i =0; i<7 ; i++){
-            if (filledDates[i]){
+            thisWeek.set(Calendar.DAY_OF_WEEK, i+1);
+            ArrayList<String> variables =  db.getDataTypes();
+            int d = thisWeek.get(Calendar.DAY_OF_MONTH);
+            int m = thisWeek.get(Calendar.MONTH);
+            int y = thisWeek.get(Calendar.YEAR);
+            ArrayList<String> output = db.getItemByDay(variables, d, m, y);
+            if (output.size() > 0) {
                 dotsIndicators[i].setVisibility(ImageView.VISIBLE);
             }
             else {
                 dotsIndicators[i].setVisibility(ImageView.INVISIBLE);
             }
-        }*/
+        }
     }
 
     //onCreate function that creates everything when the app is opened
@@ -565,11 +728,9 @@ public class MainActivity extends AppCompatActivity {
         dataSetTypes = new ArrayList<>();
         items = new ArrayList<>();
         db = new DataBaseHandler(getApplicationContext());
-
         //gets and shows the main screen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         listview = findViewById(R.id.listViewID);
 
         //main screen buttons
@@ -651,7 +812,7 @@ public class MainActivity extends AppCompatActivity {
         //click listener for opening the graphs menu
         graphs_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                openGraphsMenu();
+                openGraphsMenu(true);
             }
         });
 
@@ -796,5 +957,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void changeDayByIncrement(int incr){
         currCal.add(Calendar.DATE, incr);
+    }
+
+    private Integer getGraphColor(String type){
+        switch (type){
+            case "Mood":
+                return Color.BLUE;
+            case "Exercise":
+                return Color.RED;
+        }
+        return Color.BLACK;
     }
 }

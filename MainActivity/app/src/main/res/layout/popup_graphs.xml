@@ -5,8 +5,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <Button
+        android:id="@+id/changegraphbutton"
+        android:layout_width="153dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#ff751a"
+        android:text="Mood"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.879"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/yearbarchart"
+        app:layout_constraintVertical_bias="0.111" />
 
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/daybarchart"
+        android:layout_width="350dp"
+        android:layout_height="110dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/graphsMenuText"
+        app:layout_constraintVertical_bias="0.018" />
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/weekbarchart"
+        android:layout_width="350dp"
+        android:layout_height="110dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/daybarchart"
+        app:layout_constraintVertical_bias="0.051" />
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/monthbarchart"
+        android:layout_width="350dp"
+        android:layout_height="110dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weekbarchart"
+        app:layout_constraintVertical_bias="0.081" />
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/yearbarchart"
+        android:layout_width="350dp"
+        android:layout_height="110dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/monthbarchart"
+        app:layout_constraintVertical_bias="0.15" />
+
+    <TextView
         android:id="@+id/graphsMenuText"
         android:layout_width="428dp"
         android:layout_height="68dp"
@@ -25,23 +85,14 @@
         android:id="@+id/closeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="224dp"
         android:backgroundTint="#ff751a"
         android:text="Close"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.981"
+        app:layout_constraintHorizontal_bias="0.092"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graphsMenuText" />
-
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/piechart"
-        android:layout_width="294dp"
-        android:layout_height="190dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/closeButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graphsMenuText" />
+        app:layout_constraintTop_toBottomOf="@+id/yearbarchart"
+        app:layout_constraintVertical_bias="0.111" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

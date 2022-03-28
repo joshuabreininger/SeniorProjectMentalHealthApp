@@ -7,35 +7,49 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.util.ArrayList;
+//item class was red so i imported this idk if its right
+import com.example.mainactivity.Model.Item;
 
-//item was red so i imported this idk if its right
+import java.util.ArrayList;
 
 public class DataBaseHandler extends SQLiteOpenHelper {
 
     private ArrayList<String> types;
+    private ArrayList<String> longTermTypes;
 
     public DataBaseHandler(Context context) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
         types = new ArrayList<>();
+        longTermTypes = new ArrayList<>();
         setDataTypes();
     }
     private void setDataTypes(){
         types.add("Mood");
         types.add("Food");
         types.add("Exercise");
+        longTermTypes.add("Mood");
+        longTermTypes.add("Exercise");
     }
 
+    public ArrayList<String> getGraphTypes() {return longTermTypes;}
+
+    public ArrayList<String> getDataTypes(){
+        return types;
+    }
     public ArrayList<String> getDatasetTypes(){
         return types;
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         /*
         String OBJECTTABLE = "CREATE TABLE objecttable(" +
                 "Object_ID INTEGER, " +
                 "Object_PATH varchar(20), " +
                 "PRIMARY KEY (Object_ID));";
+
+
+
         */
         String SCENARIOTABLE = "CREATE TABLE scenariotable(" +
                 "Object_ID INTEGER, " +
@@ -64,10 +78,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "Sugar INTEGER, " +
                 "Exercise INTEGER, " +
                 "PRIMARY KEY(Day_Num, Month_Num, Year_Num));";
-                // will use these 3 when we fully implement the database - Josh
-                //"FOREIGN KEY (Year_Num) REFERENCES YEARTABLE (Year_Num), " +
-                //"FOREIGN KEY (Month_Num) REFERENCES MONTHTABLE (Month_Num), " +
-                //"PRIMARY KEY(Day_Num, Month_Num, Year_Num));";
+        // will use these 3 when we fully implement the database - Josh
+        //"FOREIGN KEY (Year_Num) REFERENCES YEARTABLE (Year_Num), " +
+        //"FOREIGN KEY (Month_Num) REFERENCES MONTHTABLE (Month_Num), " +
+        //"PRIMARY KEY(Day_Num, Month_Num, Year_Num));";
 
 
         String MONTHTABLE = "CREATE TABLE " +
@@ -75,6 +89,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "Month_Num INTEGER, " +
                 "Av_Exercise REAL, " +
                 "Av_Mood REAL, " +
+                "Count_Exercise INTEGER, " +
+                "Count_Mood INTEGER, " +
                 "Year_ID INTEGER, " +
                 "FOREIGN KEY (Year_ID) REFERENCES YEARTABLE (Year_Num), " +
                 "PRIMARY KEY (Month_Num, Year_ID));";
@@ -83,6 +99,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String YEARTABLE = "CREATE TABLE " +
                 Constants.TABLE_NAME_YEAR + " (" +
                 "Year_Num INTEGER PRIMARY KEY, " +
+                "Count_Exercise INTEGER, " +
+                "Count_Mood INTEGER, " +
                 "Av_Exercise REAL, " +
                 "Av_Mood REAL);";
 
@@ -180,6 +198,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String columns =  "Day_Num, Month_Num, Year_Num, ";
         String values = day +", " + month +", " + year + ", ";
+        ArrayList<String> alreadyReplaced = new ArrayList<String>();
+
         for(int i =0; i<items.size(); i++){
             columns += types.get(i);
 
@@ -193,16 +213,30 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             }
             values += textType;
 
-            if (i+1 < types.size()){
+            if (i+1 < types.size()) {
                 columns += ", ";
                 values += ", ";
+            }
+            if (longTermTypes.contains(types.get(i))){
+                String input = "SELECT " + types.get(i) + " FROM " +
+                        Constants.TABLE_NAME_DAY + " WHERE " +
+                        " Day_Num = " + day +
+                        " AND Month_Num = " + month +
+                        " AND Year_Num = " + year + ";";
+                Cursor cursor = db.rawQuery(input, null);
+                String output = "NULL";
+                if (cursor != null && cursor.getCount() > 0){
+                    cursor.moveToFirst();
+                    output = cursor.getString(cursor.getColumnIndexOrThrow(types.get(i)));
+                }
+                updateAvgMonthYearTable(types.get(i), items.get(i), month, year, output);
             }
         }
 
         String input = "INSERT OR REPLACE INTO " + Constants.TABLE_NAME_DAY +
-                " (" + columns + ") " + " VALUES(" + values + ");";
+                " (" + columns + ") " + " VALUES (" + values + ");";
         db.execSQL(input);
-        //db.close();
+        db.close();
     }
 
     public static boolean isNumeric(String str) {
@@ -230,11 +264,188 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-       //cursor.close();
-       //db.close();
+        cursor.close();
+        db.close();
 
         return db_list;
 
+    }
+
+    public ArrayList<String> getItemByDay(ArrayList<String> variables,int day, int month, int year){
+        if(variables.size() <=0){
+            return null;
+        }
+
+        String var = variables.get(0);
+        for(int i = 1; i< variables.size(); i++){
+            var += ", " + variables.get(i);
+        }
+        String query = "SELECT "+ var +" FROM " + Constants.TABLE_NAME_DAY +
+                " WHERE Day_Num=" + day +
+                " AND Month_Num=" + month +
+                " AND Year_Num=" + year + ";";
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> db_list = new ArrayList<>();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()){
+            do {
+                for (String type : variables) {
+                    String input = "";
+                    try {
+                        input = cursor.getString(cursor.getColumnIndexOrThrow(type));
+                    }
+                    catch(Exception e){
+                    }
+                    db_list.add(input);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return db_list;
+    }
+
+    public String[] getItemsByMonth(String var, int month, int year){
+        String[] info = new String[32];
+        String query = "SELECT Day_Num, "+ var +" FROM " + Constants.TABLE_NAME_DAY +
+                " WHERE Month_Num=" + month +
+                " AND Year_Num=" + year + ";";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()){
+            do {
+                int day = cursor.getInt(cursor.getColumnIndexOrThrow("Day_Num"));
+                String input = cursor.getString(cursor.getColumnIndexOrThrow(var));
+                info[day] = input;
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return info;
+    }
+
+    public String[] getAvgMonthInYear(String var, int year){
+        String[] month = new String[12];
+        for (int i=0;i < 12;i++){
+            month[i] = "";
+        }
+        String query = "SELECT Month_Num, Av_"+ var +" FROM " + Constants.TABLE_NAME_MONTH +
+                " WHERE Year_ID=" + year + ";";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()){
+            do {
+                int monthIndex = cursor.getInt(cursor.getColumnIndexOrThrow("Month_Num"));
+                String input = cursor.getString(cursor.getColumnIndexOrThrow("Av_" + var));
+                month[monthIndex] = input;
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return month;
+    }
+
+    public String[] getAvgYearList(String var, int year, int setBack){
+        String[] yearVal = new String[setBack];
+        for (int i=0;i<setBack;i++){
+            yearVal[i] = "";
+        }
+
+        String query = "SELECT Year_Num, Av_"+ var +" FROM " + Constants.TABLE_NAME_YEAR +
+                " WHERE Year_Num >" + (year - setBack) + ";";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()){
+            do {
+                int yearIndex = cursor.getInt(cursor.getColumnIndexOrThrow("Year_Num"));
+                String input = cursor.getString(cursor.getColumnIndexOrThrow("Av_" + var));
+                yearVal[ setBack- 1 -(year-yearIndex) ] = input;
+            } while (cursor.moveToNext());
+        }
+
+        db.close();
+        return yearVal;
+    }
+
+    private void updateAvgMonthYearTable(String type, String val, int month, int year, String prev){
+        int monthCnt = 0;
+        double monthAvg = 0;
+        int yearCnt = 0;
+        double yearAvg = 0;
+        String avgType = "Av_" + type;
+        String cntType = "Count_" + type;
+
+        String queryMonth = "SELECT " + avgType + ", " + cntType +" FROM " + Constants.TABLE_NAME_MONTH +
+                " WHERE Month_Num=" + month +
+                " AND Year_ID=" + year + ";";
+
+        String queryYear = "SELECT " + avgType + ", " + cntType +" FROM " + Constants.TABLE_NAME_YEAR +
+                " WHERE Year_Num=" + year + ";";
+
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        boolean noMonth = true;
+        boolean noYear = true;
+        Cursor cursor = db.rawQuery(queryMonth, null);
+        if(cursor != null && cursor.getCount() > 0) {
+            noMonth = false;
+            cursor.moveToFirst();
+            monthCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
+            monthAvg = cursor.getDouble(cursor.getColumnIndexOrThrow(avgType));
+        }
+        cursor = db.rawQuery(queryYear, null);
+
+        if(cursor != null && cursor.getCount() > 0) {
+            noYear = false;
+            cursor.moveToFirst();
+            yearCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
+            yearAvg = cursor.getDouble(cursor.getColumnIndexOrThrow(avgType));
+        }
+        if(prev == "NULL") {
+            monthAvg = (monthAvg * monthCnt + Float.parseFloat(val)) / (monthCnt + 1);
+            yearAvg = (yearAvg * yearCnt + Float.parseFloat(val)) / (yearCnt + 1);
+        }
+        else{
+            float newVal = Float.parseFloat(val);
+            float prevVal = Float.parseFloat(prev);
+            monthAvg = monthAvg + (newVal - prevVal) / (monthCnt);
+            yearAvg = yearAvg + (newVal - prevVal) / (yearCnt);
+        }
+
+        String monthCol =  "Month_Num, Year_ID, " + avgType + ", " + cntType;
+        String monthValues = month +", " + year + ", " + monthAvg + ", " +(monthCnt + 1);
+
+        String yearCol =  "Year_Num, " + avgType + ", " + cntType;
+        String yearValues = year + ", " + yearAvg + ", " +(yearCnt + 1);
+
+        String monthInput;
+        if (noMonth) {
+            monthInput = "INSERT INTO " + Constants.TABLE_NAME_MONTH +
+                    " (" + monthCol + ")" + " VALUES (" + monthValues + ");";
+        }
+        else{
+            monthInput = "UPDATE " + Constants.TABLE_NAME_MONTH +
+                    " SET " +
+                    avgType + " = " + monthAvg + ", " +
+                    cntType + " = " + (monthCnt + 1) +
+                    " WHERE Month_Num = " + month +
+                    " AND Year_ID = " + year + ";";
+        }
+        db.execSQL(monthInput);
+
+        String yearInput;
+        if (noYear) {
+            yearInput = "INSERT INTO " + Constants.TABLE_NAME_YEAR +
+                    " (" + yearCol + ")" + " VALUES (" + yearValues + ");";
+        }
+        else{
+            yearInput = "UPDATE " + Constants.TABLE_NAME_YEAR +
+                    " SET " +
+                    avgType + " = " + yearAvg + ", " +
+                    cntType + " = " + (yearCnt + 1) +
+                    " WHERE Year_Num = " + year + ";";
+        }
+        db.execSQL(yearInput);
     }
 
     public String[] getDailyScenario() {
