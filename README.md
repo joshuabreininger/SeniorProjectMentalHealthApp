@@ -34,7 +34,7 @@ Milestone 4 (Feb 14): [Presentation](https://docs.google.com/presentation/d/1-K5
 
 Milestone 5 (Mar 21): [Presentation](https://docs.google.com/presentation/d/1UEb4D-6I7jdAGeKjWUp0IYJJbWy0P3h2Pkdr5b5EJWY/edit#slide=id.gf769f01eaf_1_29), [Progress Evaluation](Milestone5ProgressEvaluation.pdf), [Poster](https://docs.google.com/presentation/d/191155tAHzb6ejTnrCqPH7O54MMoJIZmd/edit#slide=id.p1), [E-Book Page](https://docs.google.com/document/d/1v-mKCEpQHS6yEql7V8jmJ6O1Xli5t1y1/edit)
 
-Milestone 6 (Apr 18): [Presentation](https://docs.google.com/presentation/d/187bND12AQS5G74DwQqDXla_vemvso7nvELAassGGjyw/edit?usp=sharing), [Progress Evaluation](Milestone2ProgressEvaluation.pdf), [Demo Video](tempVideo), [User Manual](tempManual)
+Milestone 6 (Apr 18): [Presentation](https://docs.google.com/presentation/d/1LhByVj8U_3A6vz_UITXQYUQeDn_iULaNDMvg2WMj0eo/edit?usp=sharing), [Progress Evaluation](Milestone6ProgressEvaluation.pdf), [User Manual](Manual.pdf)
 
 
 
