@@ -29,11 +29,24 @@
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_food.xml" value="0.2269021739130435" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_graphs.xml" value="0.25" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_mood.xml" value="0.19021739130434784" />
-        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/activity_main.xml" value="0.1911231884057971" />
-        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_adventure_log.xml" value="0.1" />
-        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_adventure_scenario.xml" value="0.1342451874366768" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.14907407407407408" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable/enemy_health.xml" value="0.14907407407407408" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable/exp_bar.xml" value="0.26458333333333334" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable/gray_bar.xml" value="0.26458333333333334" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.14907407407407408" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable/input_dot.xml" value="0.14907407407407408" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable/mana_bar.xml" value="0.14907407407407408" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/activity_main.xml" value="0.375" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/list_row.xml" value="0.1852355072463768" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup.xml" value="0.1852355072463768" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_adventure_log.xml" value="0.165" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_adventure_scenario.xml" value="0.25" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_battle.xml" value="0.375" />
         <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_calendar.xml" value="0.1342451874366768" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_exercise.xml" value="0.1852355072463768" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_food.xml" value="0.1852355072463768" />
         <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_graphs.xml" value="0.25" />
+        <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/layout/popup_mood.xml" value="0.1852355072463768" />
       </map>
     </option>
   </component>

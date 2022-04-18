@@ -14,26 +14,27 @@
         tools:layout_editor_absoluteY="-1dp" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/closeButton"
+        android:id="@+id/close_scene_button"
         android:layout_width="133dp"
         android:layout_height="56dp"
-        android:layout_marginStart="132dp"
-        android:layout_marginBottom="24dp"
         android:background="@drawable/buttons"
         android:text="Close"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/logBG"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logview"
+        app:layout_constraintVertical_bias="0.736" />
 
     <TextView
         android:id="@+id/logview"
         android:layout_width="250dp"
         android:layout_height="165dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="112dp"
+        android:layout_marginTop="96dp"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

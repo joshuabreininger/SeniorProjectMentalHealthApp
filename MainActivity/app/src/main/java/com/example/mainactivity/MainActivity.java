@@ -10,40 +10,33 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.media.Image;
-import android.media.metrics.Event;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import com.example.mainactivity.Data.DataBaseHandler;
-import com.example.mainactivity.Model.Item;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.mainactivity.Data.Constants;
-import com.example.mainactivity.Model.Item;
-import java.util.Date;
+import com.example.mainactivity.campaign.Campaign;
+import com.example.mainactivity.campaign.Player;
+import com.example.mainactivity.campaign.Enemy;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -53,6 +46,9 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Button toBattleMode;
+    private Campaign battle;
 
     private Calendar todayCal,currCal;
 
@@ -68,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
+    private AlertDialog.Builder battleDialogBuilder;
+    private AlertDialog battleDialog;
 
     //calender view variables
     private TextView CalendarView;
@@ -89,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private Button graphs_button, graphs_button_close, graphs_button_change;
 
     //adventure log variables
-    private Button adventure_log_button, adventure_log_button_close;
+    private Button adventure_log_button, adventure_log_button_close, adventure_log_button_to_battle;
 
     //log all-in-one mood menu variables
     private Button log_all_in_one_button, mood_button_ok, mood_button_skip;
@@ -107,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
     private Button adventure_scenario_close;
     private ImageView scenario_bg1, scenario_bg2, scenario_bg3, scenario_bg4, scenario_bg5, scenario_bg6, opponent;
     private TextView scenario_text;
+
+    //battle system
+    private Button attack, magicAttack, goToScenario, battleClose;
+    private TextView enemyHealthTxt, playerManaTxt, playerExpText;
+    private ProgressBar enemyHealthBar, playerManaBar, playerExpBar;
+    private ImageView player, enemy;
 
     //unused test popup
     public void createNewContactDialog(){
@@ -203,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
 
                 saveMood();
                 //refreshdata();
-
                 dialog.dismiss();
                 openFoodMenu();
             }
@@ -290,9 +293,7 @@ public class MainActivity extends AppCompatActivity {
                 saveExercise();
                 //refreshdata();
 
-                dialog.dismiss();
-
-                generateScenario();
+                finishedLog();
             }
         });
 
@@ -300,14 +301,23 @@ public class MainActivity extends AppCompatActivity {
         exercise_button_skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v) {
-                dialog.dismiss();
-
-                generateScenario();
+                finishedLog();
             }
         });
     }
 
-    public void generateScenario(){
+    private void finishedLog(){
+        dialog.dismiss();
+        boolean firstInputToday = db.SaveList(items, dataSetTypes, currCal.get(Calendar.DAY_OF_MONTH),
+                currCal.get(Calendar.MONTH), currCal.get(Calendar.YEAR));
+        updateCalendarView();
+        if(firstInputToday) {
+            generateScenario(true);
+            db.updateManaRegen();
+        }
+    }
+
+    public void generateScenario(boolean newScene){
         //gets the layout of the adventure scenario
         final View scenarioMenuView = getLayoutInflater().inflate(R.layout.popup_adventure_scenario, null);
 
@@ -320,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
         //accounting for the month
         int monthCheck = currCal.get(Calendar.MONTH);
         scenario_text = (TextView) scenarioMenuView.findViewById(R.id.scenarioText);
-        opponent = (ImageView) scenarioMenuView.findViewById(R.id.opponent);
+        opponent = (ImageView) scenarioMenuView.findViewById(R.id.opponent_image);
 
         scenario_bg1 = (ImageView) scenarioMenuView.findViewById(R.id.testBG1);
         scenario_bg2 = (ImageView) scenarioMenuView.findViewById(R.id.testBG2);
@@ -360,24 +370,47 @@ public class MainActivity extends AppCompatActivity {
             scenario_text.setTextColor(Color.WHITE);
         }
 
-        //grab the scenario
-        String[] scenario = db.getDailyScenario();
-
-        //set the text to the scenario and the opponent image
-        scenario_text.setText(scenario[1]);
-        Constants c = new Constants();
-        opponent.setImageResource(c.getImageByID(Integer.parseInt(scenario[0])));
-
         //close button for the adventure scenario popup
-        adventure_scenario_close = (Button) scenarioMenuView.findViewById(R.id.closeButton);
-
+        adventure_scenario_close = (Button) scenarioMenuView.findViewById(R.id.close_scene_button);
+        adventure_log_button_to_battle = (Button) scenarioMenuView.findViewById(R.id.close_scene_to_battle_button);
         //click listener for the adventure scenario close button
+        adventure_log_button_to_battle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                dialog.dismiss();
+            }
+        });
+
         adventure_scenario_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v) {
                 dialog.dismiss();
             }
         });
+
+        //grab the scenario
+        String[] scenario;
+        if (newScene) {
+            scenario = db.getDailyScenario();
+            adventure_scenario_close.setVisibility(View.VISIBLE);
+            adventure_log_button_to_battle.setVisibility(View.GONE);
+        } else {
+            scenario = db.retrievePrevScenario();
+            adventure_scenario_close.setVisibility(View.GONE);
+            adventure_log_button_to_battle.setVisibility(View.VISIBLE);
+        }
+
+        if (scenario != null && scenario[0] != null) {
+            //set the text to the scenario and the opponent image
+            scenario_text.setText(scenario[1]);
+            Constants c = new Constants();
+            opponent.setImageResource(c.getImageByID(Integer.parseInt(scenario[0])));
+            opponent.setVisibility(View.VISIBLE);
+        }
+        else{
+            scenario_text.setText("");
+            opponent.setVisibility(View.GONE);
+        }
 
     }
 
@@ -398,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
         //close button for the settings menu
-        settings_button_close = (Button) settingsMenuView.findViewById(R.id.closeButton);
+        settings_button_close = (Button) settingsMenuView.findViewById(R.id.close_scene_button);
 
         //click listener for the settings menu close button
         settings_button_close.setOnClickListener(new View.OnClickListener() {
@@ -425,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
 
             //close button for the graphs menu
-            graphs_button_close = (Button) graphsMenuView.findViewById(R.id.closeButton);
+            graphs_button_close = (Button) graphsMenuView.findViewById(R.id.close_scene_button);
             graphs_button_change = (Button) graphsMenuView.findViewById(R.id.changegraphbutton);
             graphs_button_change.setText(chartList.get(chartIndex));
 
@@ -446,7 +479,6 @@ public class MainActivity extends AppCompatActivity {
                     openGraphsMenu(false);
                 }
             });
-
             dayBarChart = graphsMenuView.findViewById(R.id.daybarchart);
             weekBarChart = graphsMenuView.findViewById(R.id.weekbarchart);
             monthBarChart = graphsMenuView.findViewById(R.id.monthbarchart);
@@ -459,6 +491,10 @@ public class MainActivity extends AppCompatActivity {
             weekBarChart.getAxisRight().setDrawGridLines(false);
             monthBarChart.getAxisRight().setDrawGridLines(false);
             yearBarChart.getAxisRight().setDrawGridLines(false);
+            dayBarChart.getDescription().setEnabled(false);
+            weekBarChart.getDescription().setEnabled(false);
+            monthBarChart.getDescription().setEnabled(false);
+            yearBarChart.getDescription().setEnabled(false);
         }
         loadDayBarChartData(chartList.get(chartIndex));
         loadWeekBarChartData(chartList.get(chartIndex));
@@ -500,7 +536,7 @@ public class MainActivity extends AppCompatActivity {
                 values.add(new BarEntry(x, y));
             }
             BarDataSet set = new BarDataSet(values, "Daily " + type);
-            set.setColor(getGraphColor(type));
+            set.setColor(Constants.getGraphColor(type));
             set.setDrawValues(false);
             dataSets.add(set);
         }
@@ -512,7 +548,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadWeekBarChartData(String setting){
-        String Days[] = {"Wk1", "Wk2", "Wk3", "Wk4"};
+        String Days[] = {"Wk1", "Wk2", "Wk3", "Wk4", "Wk5"};
         XAxis xaxis = weekBarChart.getXAxis();
         xaxis.setValueFormatter(new IndexAxisValueFormatter(Days));
         xaxis.setCenterAxisLabels(true);
@@ -523,10 +559,13 @@ public class MainActivity extends AppCompatActivity {
 
         String[] moodList = db.getItemsByMonth(setting,currCal.get(Calendar.MONTH),currCal.get(Calendar.YEAR));
         ArrayList<BarEntry> values = new ArrayList<>();
-        for (int i=0; i<4; i++){
+        for (int i=0; i<5; i++){
             float sum = 0;
             int count = 0;
             for(int j=0;j<7;j++){
+                if(i * 7 + j >= moodList.length){
+                    break;
+                }
                 if(moodList[i * 7 + j] != null) {
                     sum += Integer.parseInt(moodList[i * 7 + j]);
                     count++;
@@ -539,7 +578,7 @@ public class MainActivity extends AppCompatActivity {
             values.add(new BarEntry(i, avg));
         }
         BarDataSet set1 = new BarDataSet(values, "Average Weekly " + setting);
-        set1.setColor(getGraphColor(setting));
+        set1.setColor(Constants.getGraphColor(setting));
         set1.setDrawValues(false);
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -570,7 +609,7 @@ public class MainActivity extends AppCompatActivity {
             values.add(new BarEntry(i, val));
         }
         BarDataSet set1 = new BarDataSet(values, "Average Monthly " + setting);
-        set1.setColor(getGraphColor(setting));
+        set1.setColor(Constants.getGraphColor(setting));
         set1.setDrawValues(false);
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -582,10 +621,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadYearBarChartData(String setting){
-        int year = currCal.get(Calendar.YEAR);
+        int year = currCal.get(Calendar.YEAR) -6;
         String Days[] = new String[7];
-        for (int i=6; i>=0; i--){
-            Days[i] = (year - i) + "";
+        for (int i=0; i<7; i++){
+            Days[i] = (year + i) + "";
         }
 
         XAxis xaxis = yearBarChart.getXAxis();
@@ -606,7 +645,7 @@ public class MainActivity extends AppCompatActivity {
             values.add(new BarEntry(i, val));
         }
         BarDataSet set1 = new BarDataSet(values, "Average Yearly " + setting);
-        set1.setColor(getGraphColor(setting));
+        set1.setColor(Constants.getGraphColor(setting));
         set1.setDrawValues(false);
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -623,7 +662,7 @@ public class MainActivity extends AppCompatActivity {
         //gets the layout of the adventure log
         final View graphsMenuView = getLayoutInflater().inflate(R.layout.popup_adventure_log, null);
         //creates and shows the popup
-        dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault);
         dialogBuilder.setView(graphsMenuView);
         dialog = dialogBuilder.create();
         dialog.show();
@@ -646,7 +685,7 @@ public class MainActivity extends AppCompatActivity {
         databaseOut.setText(text);
 
         //close button for the adventure log
-        adventure_log_button_close = (Button) graphsMenuView.findViewById(R.id.closeButton);
+        adventure_log_button_close = (Button) graphsMenuView.findViewById(R.id.close_scene_button);
 
         //click listener for the graphs menu close button
         adventure_log_button_close.setOnClickListener(new View.OnClickListener() {
@@ -657,10 +696,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     // updates the week label to match the current date or the date selected
     public void updateCalendarView(){
-        final int numSpace = 4;
         TextView tvdays = (TextView) findViewById(R.id.calendarMiniView);
         TextView tvMonths = (TextView) findViewById(R.id.monthTextView);
 
@@ -704,8 +741,6 @@ public class MainActivity extends AppCompatActivity {
         tvMonths.setText(month);
 
         //adds in the indicators for the week
-        int tempMonth = thisWeek.get(Calendar.MONTH);
-        int tempYear = thisWeek.get(Calendar.YEAR);
         for (int i =0; i<7 ; i++){
             thisWeek.set(Calendar.DAY_OF_WEEK, i+1);
             ArrayList<String> variables =  db.getDataTypes();
@@ -748,10 +783,12 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.SatDot),
         };
 
+        toBattleMode = (Button) findViewById(R.id.to_battle_button);
         log_all_in_one_button = (Button) findViewById(R.id.buttonLog);
         settings_button = (Button) findViewById(R.id.buttonSettings);
         graphs_button = (Button) findViewById(R.id.buttonGraph);
         adventure_log_button = (Button) findViewById(R.id.buttonViewAdventure);
+        updateDateTime();
 
         //calls the notification creation function
         createNotificationChannel();
@@ -795,9 +832,20 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {changeDayByIncrement(1); updateCalendarView();}
         });
 
+
+        toBattleMode.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openBattle();
+            }
+        });
+
         //click listener for opening the log all-in-one menu
         log_all_in_one_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                items.clear();
+                dataSetTypes.clear();
+                db = new DataBaseHandler(getApplicationContext());
+                //updateDateTime();
                 openMoodMenu();
             }
         });
@@ -908,10 +956,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveMood(){
-        items.clear();
-        dataSetTypes.clear();
-        db = new DataBaseHandler(getApplicationContext());
-
         String moodValue = moodInput_edittext.getText().toString();
 
         items.add(moodValue);
@@ -922,6 +966,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveFood(){
         db = new DataBaseHandler(getApplicationContext());
+
 
         String foodGroups = foodInput_edittext.getText().toString();
 
@@ -934,20 +979,7 @@ public class MainActivity extends AppCompatActivity {
         String exerciseTime = exerciseInput_edittext.getText().toString();
         items.add(exerciseTime);
         dataSetTypes.add("Exercise");
-        db.SaveList(items, dataSetTypes, currCal.get(Calendar.DAY_OF_MONTH),
-                currCal.get(Calendar.MONTH), currCal.get(Calendar.YEAR));
     }
-
-    //template
-    /*private void saveToDataBase(){
-        db = new DataBaseHandler(getApplicationContext());
-        Item item = new Item();
-
-        String value = newcontactpopup_firstname.getText().toString();
-
-        item.setInput(value);
-        db.Save(item, [type], 1, 2, 3);
-    }*/
 
     public void updateDateTime() {
         Calendar cal = Calendar.getInstance();
@@ -959,13 +991,143 @@ public class MainActivity extends AppCompatActivity {
         currCal.add(Calendar.DATE, incr);
     }
 
-    private Integer getGraphColor(String type){
-        switch (type){
-            case "Mood":
-                return Color.BLUE;
-            case "Exercise":
-                return Color.RED;
+    /*
+    private Button attack, magicAttack, go_to_scenario, battle_close;
+    private TextView enemyHealthTxt, playerManaTxt, playerExpText;
+    private ProgressBar enemyHealthBar, playerManaBar, playerExpBar;
+    private ImageView player, enemy;
+     */
+    private void openBattle(){
+        final View battleMenuView = getLayoutInflater().inflate(R.layout.popup_battle, null);
+        battleDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault);
+        battleDialogBuilder.setView(battleMenuView);
+        battleDialog = battleDialogBuilder.create();
+        battleDialog.show();
+
+        attack = (Button)  battleMenuView.findViewById(R.id.close_scene_button);
+        magicAttack = (Button) battleMenuView.findViewById(R.id.spell_button);
+        goToScenario = (Button) battleMenuView.findViewById(R.id.to_scenario_button);
+        battleClose = (Button) battleMenuView.findViewById(R.id.close_button);
+
+        enemyHealthBar = battleMenuView.findViewById(R.id.enemy_health_bar);
+        playerManaBar = battleMenuView.findViewById(R.id.player_mana_bar);
+        playerExpBar = battleMenuView.findViewById(R.id.player_level_bar);
+
+        enemyHealthTxt = battleMenuView.findViewById(R.id.enemy_health_txt);
+        playerManaTxt = battleMenuView.findViewById(R.id.player_mana_text);
+        playerExpText = battleMenuView.findViewById(R.id.player_level_text);
+
+        player = battleMenuView.findViewById(R.id.player_image);
+        enemy = battleMenuView.findViewById(R.id.opponent_image);
+
+        int monthCheck = currCal.get(Calendar.MONTH);
+        scenario_bg1 = (ImageView) battleMenuView.findViewById(R.id.testBG1);
+        scenario_bg2 = (ImageView) battleMenuView.findViewById(R.id.testBG2);
+        scenario_bg3 = (ImageView) battleMenuView.findViewById(R.id.testBG3);
+        scenario_bg4 = (ImageView) battleMenuView.findViewById(R.id.testBG4);
+        scenario_bg5 = (ImageView) battleMenuView.findViewById(R.id.testBG5);
+        scenario_bg6 = (ImageView) battleMenuView.findViewById(R.id.testBG6);
+        scenario_bg1.setAlpha(0f);
+        scenario_bg2.setAlpha(0f);
+        scenario_bg3.setAlpha(0f);
+        scenario_bg4.setAlpha(0f);
+        scenario_bg5.setAlpha(0f);
+        scenario_bg6.setAlpha(0f);
+
+        if (monthCheck >= 0 && monthCheck <= 1) {
+            scenario_bg1.setAlpha(1f);
         }
-        return Color.BLACK;
+        else if (monthCheck >= 2 && monthCheck <= 3) {
+            scenario_bg2.setAlpha(1f);
+        }
+        else if (monthCheck >= 4 && monthCheck <= 5) {
+            scenario_bg3.setAlpha(1f);
+        }
+        else if (monthCheck >= 6 && monthCheck <= 7) {
+            scenario_bg4.setAlpha(1f);
+        }
+        else if (monthCheck >= 8 && monthCheck <= 9) {
+            scenario_bg5.setAlpha(1f);
+        }
+        else if (monthCheck >= 10 && monthCheck <= 11) {
+            scenario_bg6.setAlpha(1f);
+        }
+
+        Player p = db.retrievePlayer();
+        Enemy e = db.retrieveEnemy();
+        battle = new Campaign(p, e);
+        Constants c = new Constants();
+
+        attack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                battle.attack(0,0);
+                updatePlayerAndEnemyDatabase();
+                updateBattleUI();
+            }
+        });
+
+        magicAttack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                battle.attack(1,0);
+                updatePlayerAndEnemyDatabase();
+                updateBattleUI();
+            }
+        });
+
+        battleClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                battleDialog.dismiss();
+            }
+        });
+
+        goToScenario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                generateScenario(false);
+            }
+        });
+
+        if (battle.isEnemyGone()){
+            battle.newenemy(db.getNewEnemy());
+            updatePlayerAndEnemyDatabase();
+        }
+        updateBattleUI();
+    }
+
+    private void updateBattleUI(){
+        playerManaTxt.setText(battle.getPlayerMana() + "");
+        playerManaBar.setMax(battle.getPlayerMaxMana());
+        playerManaBar.setProgress(battle.getPlayerMana());
+        playerExpText.setText((battle.getPlayerExp() / 100) + "");
+        playerExpBar.setProgress(battle.getPlayerExp() % 100);
+
+        enemyHealthTxt.setText(battle.getEnemyHealth() + "");
+        enemyHealthBar.setMax(battle.getEnemyMaxHealth());
+        enemyHealthBar.setProgress(battle.getEnemyHealth());
+
+        if(battle.getEnemyHealth() == 0) {
+            enemy.setVisibility(View.GONE);
+        }
+        else{
+            enemy.setImageResource(Constants.getImageByID(battle.getEnemyImageID()));
+            enemy.setVisibility(View.VISIBLE);
+        }
+
+        if(battle.canAttack()){
+            attack.setVisibility(View.VISIBLE);
+            magicAttack.setVisibility(View.VISIBLE);
+        }
+        else{
+            attack.setVisibility(View.GONE);
+            magicAttack.setVisibility(View.GONE);
+        }
+    }
+
+    private void updatePlayerAndEnemyDatabase(){
+        db.updateEnemy(battle.getEnemyStats());
+        db.updatePlayer(battle.getPlayerStats());
     }
 }

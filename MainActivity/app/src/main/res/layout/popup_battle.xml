@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/testBG1"
+        android:layout_width="411dp"
+        android:layout_height="731dp"
+        android:background="@raw/bg1"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <ImageView
+        android:id="@+id/testBG2"
+        android:layout_width="411dp"
+        android:layout_height="731dp"
+        android:background="@raw/bg2"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <ImageView
+        android:id="@+id/testBG3"
+        android:layout_width="411dp"
+        android:layout_height="731dp"
+        android:background="@raw/bg3"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <ImageView
+        android:id="@+id/testBG4"
+        android:layout_width="411dp"
+        android:layout_height="731dp"
+        android:background="@raw/bg4"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <ImageView
+        android:id="@+id/testBG5"
+        android:layout_width="411dp"
+        android:layout_height="731dp"
+        android:background="@raw/bg5"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <ImageView
+        android:id="@+id/testBG6"
+        android:layout_width="411dp"
+        android:layout_height="731dp"
+        android:background="@raw/bg6"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <ImageView
+        android:id="@+id/player_image"
+        android:layout_width="104dp"
+        android:layout_height="208dp"
+        android:foreground="@raw/default_character_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.169"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/testBG1"
+        app:layout_constraintVertical_bias="0.552" />
+
+    <ImageView
+        android:id="@+id/opponent_image"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/testBG1"
+        app:layout_constraintVertical_bias="0.559" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/close_scene_button"
+        android:layout_width="150dp"
+        android:layout_height="95dp"
+        android:layout_marginTop="520dp"
+        android:background="@drawable/buttons"
+        android:text="Attack"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/testBG1"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/spell_button"
+        android:layout_width="150dp"
+        android:layout_height="95dp"
+        android:layout_marginTop="520dp"
+        android:background="@drawable/buttons"
+        android:text="Spell"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.938"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/testBG1"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/close_button"
+        android:layout_width="86dp"
+        android:layout_height="60dp"
+        android:background="@drawable/buttons"
+        android:text="Close"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.956" />
+
+    <TextView
+        android:id="@+id/enemy_health_txt"
+        android:layout_width="120dp"
+        android:layout_height="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="100"
+        android:textAlignment="center"
+        android:textColor="#F86945"
+        android:textStyle="bold"
+        android:translationZ="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/enemy_health_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.872"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/player_mana_text"
+        android:layout_width="120dp"
+        android:layout_height="16dp"
+        android:text="1000"
+        android:textAlignment="center"
+        android:textColor="#03A9F4"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/player_mana_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.151"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.967" />
+
+    <TextView
+        android:id="@+id/player_level_text"
+        android:layout_width="36dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginBottom="93dp"
+        android:text="1"
+        android:textAlignment="center"
+        android:textColor="#FFC107"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/player_level_bar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/player_mana_bar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="120dp"
+        android:layout_height="15dp"
+        android:backgroundTintMode="add"
+        android:indeterminate="false"
+        android:progress="50"
+        android:progressBackgroundTint="#5C476A7C"
+        android:progressTint="#4EACEB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.151"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.346" />
+
+    <ProgressBar
+        android:id="@+id/player_level_bar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="190dp"
+        android:layout_height="8dp"
+        android:layout_marginBottom="325dp"
+        android:backgroundTintMode="add"
+        android:indeterminate="false"
+        android:progress="50"
+        android:progressBackgroundTint="#885C4602"
+        android:progressTint="#EDD03B"
+        android:rotation="-90"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/player_image"
+        app:layout_constraintHorizontal_bias="0.463"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/enemy_health_bar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="120dp"
+        android:layout_height="15dp"
+        android:backgroundTintMode="add"
+        android:indeterminate="false"
+        android:max="600"
+        android:progress="600"
+        android:progressBackgroundTint="#85AF8989"
+        android:progressTint="#F95644"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.872"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.346" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/to_scenario_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/book"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.956" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

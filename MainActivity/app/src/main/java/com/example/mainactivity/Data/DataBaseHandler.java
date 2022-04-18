@@ -9,6 +9,8 @@ import android.util.Log;
 
 //item class was red so i imported this idk if its right
 import com.example.mainactivity.Model.Item;
+import com.example.mainactivity.campaign.Player;
+import com.example.mainactivity.campaign.Enemy;
 
 import java.util.ArrayList;
 
@@ -42,87 +44,51 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        db.execSQL(Constants.AVERAGEFOOD);
+        db.execSQL(Constants.DAYTABLE);
+        db.execSQL(Constants.MONTHTABLE);
+        db.execSQL(Constants.YEARTABLE);
+        db.execSQL(Constants.SCENARIOTABLE);
+        db.execSQL(Constants.PLAYERTABLE);
+        db.execSQL(Constants.ENEMYTABLELIST);
+
+        ArrayList<String> sceneList = Constants.getScenarioDataBase();
         /*
-        String OBJECTTABLE = "CREATE TABLE objecttable(" +
-                "Object_ID INTEGER, " +
-                "Object_PATH varchar(20), " +
-                "PRIMARY KEY (Object_ID));";
-
-
-
-        */
-        String SCENARIOTABLE = "CREATE TABLE scenariotable(" +
-                "Object_ID INTEGER, " +
-                "Scenario_ID INTEGER, " +
-                "Scenario varchar(40), " +
-                //"FOREIGN KEY (Object_ID) REFERENCES OBJECTTABLE (Object_ID), " +
-                "PRIMARY KEY (Object_ID, Scenario_ID));";
-
-        String AVERAGEFOOD = "CREATE TABLE " +
-                Constants.TABLE_NAME_FOOD + " (" +
-                "Average_Fruits REAL, " +
-                "Average_Vegetables REAL, " +
-                "Average_Sugar REAL, " +
-                "Year_Num INTEGER, " +
-                "Month_Num INTEGER DEFAULT - 1);";
-
-        String DAYTABLE = "CREATE TABLE " +
-                Constants.TABLE_NAME_DAY + " (" +
-                "Day_Num INTEGER, " +
-                "Year_Num INTEGER, " +
-                "Month_Num INTEGER, " +
-                "Mood INTEGER, " +
-                "Food varchar(255)," +
-                "Fruit INTEGER, " +
-                "Vegetable INTEGER, " +
-                "Sugar INTEGER, " +
-                "Exercise INTEGER, " +
-                "PRIMARY KEY(Day_Num, Month_Num, Year_Num));";
-        // will use these 3 when we fully implement the database - Josh
-        //"FOREIGN KEY (Year_Num) REFERENCES YEARTABLE (Year_Num), " +
-        //"FOREIGN KEY (Month_Num) REFERENCES MONTHTABLE (Month_Num), " +
-        //"PRIMARY KEY(Day_Num, Month_Num, Year_Num));";
-
-
-        String MONTHTABLE = "CREATE TABLE " +
-                Constants.TABLE_NAME_MONTH + " (" +
-                "Month_Num INTEGER, " +
-                "Av_Exercise REAL, " +
-                "Av_Mood REAL, " +
-                "Count_Exercise INTEGER, " +
-                "Count_Mood INTEGER, " +
-                "Year_ID INTEGER, " +
-                "FOREIGN KEY (Year_ID) REFERENCES YEARTABLE (Year_Num), " +
-                "PRIMARY KEY (Month_Num, Year_ID));";
-
-
-        String YEARTABLE = "CREATE TABLE " +
-                Constants.TABLE_NAME_YEAR + " (" +
-                "Year_Num INTEGER PRIMARY KEY, " +
-                "Count_Exercise INTEGER, " +
-                "Count_Mood INTEGER, " +
-                "Av_Exercise REAL, " +
-                "Av_Mood REAL);";
-
-        //db.execSQL(OBJECTTABLE);
-        db.execSQL(SCENARIOTABLE);
-        db.execSQL(AVERAGEFOOD);
-        db.execSQL(DAYTABLE);
-        db.execSQL(MONTHTABLE);
-        db.execSQL(YEARTABLE);
+        scene list
+         */
+        for( String line: sceneList){
+            db.execSQL("INSERT OR REPLACE INTO " + Constants.TABLE_SCENARIO +
+                    " (Object_ID, Scenario_ID, Scenario) VALUES " + line + ";");
+        }
 
         /*
-        String temp = "INSERT INTO objecttable" +
-                "(Object_ID, Object_Path)" +
-                "VALUES" +
-                "(2, 'bg1.png');";
+        player stats
+         */
+        String input = "INSERT OR REPLACE INTO  " + Constants.TABLE_PLAYER +
+                " (Damage, Exp, Mana, Max_Mana, Magic_Damage, Mana_Recharge,Player_ID) " +
+                "VALUES (100, 0, 100, 100, 200, 30, 0);";
 
-        db.execSQL(temp);*/
-
-        String input = "INSERT OR REPLACE INTO SCENARIOTABLE ( Object_ID, Scenario_ID, Scenario) VALUES (0, 0, \"Player has found Player\");";
         db.execSQL(input);
 
-    }//MAKE SURE TO DELETE THE DATABASE AGAIN BEFORE I DO THIS SINCE I HAVE THE APP OPEN WITH THE OLDER BUILD
+        /*
+        null first character
+         */
+        input = "INSERT OR REPLACE INTO  " + Constants.TABLE_ENEMY_LIST +
+                " (Enemy_ID, Enemy_Image_ID, Name, Health, Max_Health, Enemy_Physical_Resistance, Enemy_Magic_Resistance) " +
+                "VALUES (0, 0, \"No\", 0, 1, 0, 0);";
+
+        db.execSQL(input);
+
+        /*
+        enemy list
+         */
+        ArrayList<String> enemyList = Constants.getEnemyDataBase();
+        for( String stats: enemyList){
+            db.execSQL("INSERT OR REPLACE INTO  " + Constants.TABLE_ENEMY_LIST +
+                    " (Enemy_ID, Enemy_Image_ID, Name, Health, Max_Health, Enemy_Physical_Resistance, Enemy_Magic_Resistance) " +
+                    "VALUES " + stats + ";");
+        }
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -135,70 +101,27 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public Boolean[] getDaysOfWeekFilled(int startDay, int endDay, int month, int year){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Boolean[] exist = new Boolean[] {false, false, false, false, false, false, false};
-        try {
-            if (startDay < endDay) {
-                Cursor cursor = db.rawQuery("SELECT Day_Num FROM " + Constants.TABLE_NAME_DAY +
-                        " WHERE Month_Num = " + month + " AND Year_Num = " + year +
-                        " AND Day_Num >=" + startDay + " AND Day_Num <= " + endDay, null);
-                if (cursor.moveToFirst()) {
-                    do {
-                        int input = cursor.getInt(cursor.getColumnIndexOrThrow("Day_Num"));
-                        exist[input - startDay] = true;
-                    } while (cursor.moveToNext());
-                }
-            } else {
-                Cursor cursor = db.rawQuery("SELECT Day_Num FROM " + Constants.TABLE_NAME_DAY +
-                        " WHERE Month_Num = " + month + " AND Year_Num = " + year +
-                        " AND Day_Num >=" + startDay, null);
-                if (cursor.moveToFirst()) {
-                    do {
-                        int input = cursor.getInt(cursor.getColumnIndexOrThrow("Day_Num"));
-                        exist[input - startDay] = true;
-                    } while (cursor.moveToNext());
-                }
-                month = (month % 12) + 1;
-                if (month == 1) {
-                    year++;
-                }
-                cursor = db.rawQuery("SELECT Day_Num FROM " + Constants.TABLE_NAME_DAY +
-                        " WHERE Month_Num = " + month + " AND Year_Num = " + year +
-                        " AND Day_Num <=" + endDay, null);
-                if (cursor.moveToFirst()) {
-                    do {
-                        int input = cursor.getInt(cursor.getColumnIndexOrThrow("Day_Num"));
-                        exist[6 - (endDay - input)] = true;
-                    } while (cursor.moveToNext());
-                }
-            }
-        }catch (Exception e){
-            Log.i("TESTDB",e.toString());
+    public boolean SaveList(ArrayList<String> items, ArrayList<String> types, int day, int month, int year){
+        if (items == null || items.size() == 0){
+            return false;
         }
-        //db.close();
-        return exist;
-    }
 
-    public ArrayList<Integer> getDaysOfMonthFilled(int month, int year){
-        SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<Integer> dates = new ArrayList<Integer>();
-        Cursor cursor = db.rawQuery("SELECT Day_Num FROM " + Constants.TABLE_NAME_DAY +
-                "WHERE Month_Num = " + month + " AND Year_Num = " + year, null);
-        if (cursor.moveToFirst()) {
-            do {
-                int input = cursor.getInt(cursor.getColumnIndexOrThrow("Day_Num"));
-                dates.add(input);
-            } while (cursor.moveToNext());
-        }
-        return dates;
-    }
-
-    public void SaveList(ArrayList<String> items, ArrayList<String> types, int day, int month, int year){
         SQLiteDatabase db = this.getWritableDatabase();
         String columns =  "Day_Num, Month_Num, Year_Num, ";
         String values = day +", " + month +", " + year + ", ";
-        ArrayList<String> alreadyReplaced = new ArrayList<String>();
+
+        boolean firstInputToday = true;
+        String test = "SELECT * FROM " + Constants.TABLE_NAME_DAY +
+                " WHERE Day_Num = " + day +
+                " AND Month_Num = " + month +
+                " AND Year_Num = " + year + ";";
+        Cursor cursor = db.rawQuery(test, null);
+        if (cursor != null && cursor.getCount() > 0 ){
+            firstInputToday = false;
+        }
+        else{
+            updateNumTurns(1);
+        }
 
         for(int i =0; i<items.size(); i++){
             columns += types.get(i);
@@ -223,7 +146,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                         " Day_Num = " + day +
                         " AND Month_Num = " + month +
                         " AND Year_Num = " + year + ";";
-                Cursor cursor = db.rawQuery(input, null);
+                cursor = db.rawQuery(input, null);
                 String output = "NULL";
                 if (cursor != null && cursor.getCount() > 0){
                     cursor.moveToFirst();
@@ -237,6 +160,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 " (" + columns + ") " + " VALUES (" + values + ");";
         db.execSQL(input);
         db.close();
+        return firstInputToday;
     }
 
     public static boolean isNumeric(String str) {
@@ -246,29 +170,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         } catch(NumberFormatException e){
             return false;
         }
-    }
-
-    public ArrayList<String> getallItems(ArrayList<String> types){
-        SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<String> db_list = new ArrayList<>();
-        //Cursor cursor = db.query(Constants.TABLE_NAME_DAY, new String[]{Constants.KEY_ID, Constants.DATABASE_EDITTEXT}, null, null, null, null, null);
-        //Cursor cursor = db.query(Constants.TABLE_NAME_DAY, new String[]{"Day_Num"}, null, null, null, null, null);
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.TABLE_NAME_DAY, null);
-        if (cursor.moveToFirst()){
-            do {
-                for(String i : types) {
-                    String input  = cursor.getString(cursor.getColumnIndexOrThrow(i));
-
-                    db_list.add(input);
-                }
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        return db_list;
-
     }
 
     public ArrayList<String> getItemByDay(ArrayList<String> variables,int day, int month, int year){
@@ -451,25 +352,146 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public String[] getDailyScenario() {
         String[] input  = new String[2];
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM scenariotable ORDER BY RANDOM() LIMIT 1", null);
-
+        String removeScene = "DELETE FROM " + Constants.TABLE_SCENARIO + " WHERE Scenario_ID = -1";
+        db.execSQL(removeScene);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.TABLE_SCENARIO + " ORDER BY RANDOM() LIMIT 1", null);
         if (cursor.moveToFirst()) {
             do {
                 input[0] = cursor.getString(cursor.getColumnIndexOrThrow("Object_ID"));
                 input[1] = cursor.getString(cursor.getColumnIndexOrThrow("Scenario"));
             } while (cursor.moveToNext());
         }
+        String Input = "INSERT OR REPLACE INTO " + Constants.TABLE_SCENARIO +
+                " (Scenario_ID, Object_ID, Scenario) VALUES " +
+                " (-1, " + input[0] + ", \"" + input[1] + "\" );";
+        db.execSQL(Input);
         return input;
     }
-/*
-    //Never implemented, didnt get to part 5 of funny british man video
-    public void deleteItem(int id){
-        SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(Constants.TABLE_NAME_DAY, Constants.KEY_ID + "=?", new String[] {String.valueOf(id)});
-
+    public String[] retrievePrevScenario(){
+        String[] input  = new String[2];
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT Object_ID, Scenario FROM " + Constants.TABLE_SCENARIO + " WHERE Scenario_ID = -1", null);
+            if (cursor.moveToFirst()) {
+                do {
+                    input[0] = cursor.getString(cursor.getColumnIndexOrThrow("Object_ID"));
+                    input[1] = cursor.getString(cursor.getColumnIndexOrThrow("Scenario"));
+                } while (cursor.moveToNext());
+            }
+        return input;
     }
-*/
 
+    public Player retrievePlayer(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Player player = new Player();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.TABLE_PLAYER, null);
+        //if (cursor != null && cursor.getCount()>0) {
+        cursor.moveToFirst();
+        player.attackDamage = cursor.getInt(cursor.getColumnIndexOrThrow("Damage"));
+        player.mana = cursor.getInt(cursor.getColumnIndexOrThrow("Mana"));
+        player.maximumMana = cursor.getInt(cursor.getColumnIndexOrThrow("Max_Mana"));
+        player.exp = cursor.getInt(cursor.getColumnIndexOrThrow("Exp"));
+        player.magicDamage = cursor.getInt(cursor.getColumnIndexOrThrow("Magic_Damage"));
+        player.manaRechargeRate= cursor.getInt(cursor.getColumnIndexOrThrow("Mana_Recharge"));
+        player.numberOfTurns = cursor.getInt(cursor.getColumnIndexOrThrow("Num_Turns"));
+        //}
+        return player;
+    }
 
-}
+    public Enemy retrieveEnemy(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Enemy enemy = new Enemy();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.TABLE_ENEMY_LIST +
+                " WHERE Enemy_ID = 0", null);
+        if (cursor != null && cursor.getCount()>0) {
+            cursor.moveToFirst();
+            enemy.name = cursor.getString(cursor.getColumnIndexOrThrow("Name"));
+            enemy.enemyHealth = cursor.getInt(cursor.getColumnIndexOrThrow("Health"));
+            enemy.enemyMaxHealth = cursor.getInt(cursor.getColumnIndexOrThrow("Max_Health"));
+            enemy.magicResistance = cursor.getInt(cursor.getColumnIndexOrThrow("Enemy_Magic_Resistance"));
+            enemy.physicalResistance = cursor.getInt(cursor.getColumnIndexOrThrow("Enemy_Physical_Resistance"));
+            enemy.imageID = cursor.getInt(cursor.getColumnIndexOrThrow("Enemy_Image_ID"));
+            return enemy;
+        }
+        else{
+            return null;
+        }
+    }
+
+    public void updatePlayer(Player player){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Input = "UPDATE " + Constants.TABLE_PLAYER +
+                " SET " +
+                "Damage = " + player.attackDamage + ", " +
+                "Mana = " + player.mana + ", " +
+                "Max_Mana = " + player.maximumMana + ", " +
+                "Exp = " + player.exp + ", " +
+                "Magic_Damage = " + player.magicDamage + ", " +
+                "Mana_Recharge = " + player.manaRechargeRate + ", " +
+                "Num_Turns = " + player.numberOfTurns + " " +
+                "WHERE  Player_ID = 0;";
+        db.execSQL(Input);
+    }
+
+    public void updateEnemy(Enemy enemy){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Input = "INSERT OR REPLACE INTO " + Constants.TABLE_ENEMY_LIST +
+                " (Enemy_ID, Enemy_Image_ID, Name, Health, Max_Health, Enemy_Physical_Resistance, Enemy_Magic_Resistance) " +
+                "Values (0, " +
+                enemy.imageID + ", " +
+                "\""+ enemy.name + "\", " +
+                enemy.enemyHealth + ", " +
+                enemy.enemyMaxHealth + ", " +
+                enemy.physicalResistance + ", " +
+                enemy.magicResistance + ");";
+        db.execSQL(Input);
+    }
+
+    public Enemy getNewEnemy(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String removeEnemy = "DELETE FROM " + Constants.TABLE_ENEMY_LIST + " WHERE Enemy_ID = 0";
+        db.execSQL(removeEnemy);
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.TABLE_ENEMY_LIST +
+                " ORDER BY RANDOM() LIMIT 1", null);
+        cursor.moveToFirst();
+        Enemy enemy = new Enemy();
+        enemy.name = cursor.getString(cursor.getColumnIndexOrThrow("Name"));
+        enemy.enemyHealth = cursor.getInt(cursor.getColumnIndexOrThrow("Health"));
+        enemy.enemyMaxHealth = cursor.getInt(cursor.getColumnIndexOrThrow("Max_Health"));
+        enemy.magicResistance = cursor.getInt(cursor.getColumnIndexOrThrow("Enemy_Magic_Resistance"));
+        enemy.physicalResistance = cursor.getInt(cursor.getColumnIndexOrThrow("Enemy_Physical_Resistance"));
+        enemy.imageID = cursor.getInt(cursor.getColumnIndexOrThrow("Enemy_Image_ID"));
+        updateEnemy(enemy);
+
+        return enemy;
+    }
+
+    public void updateNumTurns(int turns){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Input = "UPDATE " + Constants.TABLE_PLAYER +
+                " SET " +
+                "Num_Turns = " + turns +
+                " WHERE Player_ID = 0";
+        db.execSQL(Input);
+    }
+
+    public void updateManaRegen(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.TABLE_PLAYER, null);
+        cursor.moveToFirst();
+        int mana = cursor.getInt(cursor.getColumnIndexOrThrow("Mana"));
+        int manaRegen = cursor.getInt(cursor.getColumnIndexOrThrow("Mana_Recharge"));
+        int max = cursor.getInt(cursor.getColumnIndexOrThrow("Max_Mana"));
+        mana += manaRegen;
+        if(mana>max){
+            mana = max;
+        }
+        String Input = "UPDATE " + Constants.TABLE_PLAYER +
+                " SET " +
+                "Mana = " + mana +
+                " WHERE Player_ID = 0";
+        db.execSQL(Input);
+    }
+ }

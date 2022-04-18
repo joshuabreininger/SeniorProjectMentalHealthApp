@@ -82,7 +82,7 @@
         tools:layout_editor_absoluteY="-8dp" />
 
     <Button
-        android:id="@+id/closeButton"
+        android:id="@+id/close_scene_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#ff751a"
