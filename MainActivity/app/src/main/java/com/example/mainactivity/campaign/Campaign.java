@@ -17,7 +17,7 @@ public class Campaign {
         enemy = en;
     }
 
-    public void newenemy(Enemy temp){ enemy = temp; }
+    public void newEnemy(Enemy temp){ enemy = temp; }
 
     public Player getPlayerStats(){
         return player;
@@ -27,14 +27,14 @@ public class Campaign {
         return enemy;
     }
 
-    public double attack(int type, int modifier){
+    public double attack(int type){
         switch (type) {
             case 0:
-                dealDamage(player.attackDamage + modifier - enemy.physicalResistance);
+                dealDamage(player.attackDamage + player.damgeMod - enemy.physicalResistance);
                 return enemy.enemyHealth;
             case 1:
                 if(player.mana == 100) {
-                    dealDamage(player.magicDamage + modifier - enemy.magicResistance);
+                    dealDamage(player.magicDamage + player.damgeMod - enemy.magicResistance);
                     player.mana = 0;
                     return enemy.enemyHealth;
                 }

@@ -9,7 +9,6 @@ public class Constants {
 
     public static final String DATABASE_NAME = "MentalHealthDB";
     public static final int DATABASE_VERSION = 1;
-    //public static final String KEY_ID = "id";
     public static final String TABLE_NAME_FOOD = "averagefood";
     public static final String TABLE_NAME_DAY = "daytable";
     public static final String TABLE_NAME_MONTH = "monthtable";
@@ -18,10 +17,11 @@ public class Constants {
     public static final String TABLE_SCENARIO =  "scenariotable";
     public static final String TABLE_ENEMY_LIST = "enemylisttable";
     public static final String TABLE_PLAYER = "player";
+    public static final String TABLE_NAME_SETTINGS = "settingstable";
     //public static final String DATABASE_EDITTEXT = "edittext_value";
 
     public static final String PLAYERTABLE = "CREATE TABLE " +
-            Constants.TABLE_PLAYER + " (" +
+            TABLE_PLAYER + " (" +
             "Damage INTEGER, " +
             "Exp INTEGER, " +
             "Mana INTEGER, " +
@@ -31,6 +31,7 @@ public class Constants {
             "Day_Num INTEGER, " +
             "Mana_Recharge INTEGER, " +
             "Num_Turns INTEGER, " +
+            "Damage_Mod INTEGER, " +
             // this can be used for later if we want to add m
                 /*"Stamina_Dmg INTEGER, " +
                 "Stamina_Restore INTEGER, " +
@@ -40,7 +41,7 @@ public class Constants {
             "PRIMARY KEY (Player_ID));";
 
     public static final String ENEMYTABLELIST = "CREATE TABLE " +
-            Constants.TABLE_ENEMY_LIST + " (" +
+            TABLE_ENEMY_LIST + " (" +
             "Health INTEGER, " +
             "Enemy_ID INTEGER, " +
             "Max_Health INTEGER, " +
@@ -51,28 +52,19 @@ public class Constants {
             "PRIMARY KEY (Enemy_ID));";
 
     public static final String SCENARIOTABLE = "CREATE TABLE " +
-            Constants.TABLE_SCENARIO + " (" +
+            TABLE_SCENARIO + " (" +
             "Object_ID INTEGER, " +
             "Scenario_ID INTEGER, " +
             "Scenario varchar(40), " +
             //"FOREIGN KEY (Object_ID) REFERENCES OBJECTTABLE (Object_ID), " +
             "PRIMARY KEY (Scenario_ID));";
 
-    public static final String AVERAGEFOOD = "CREATE TABLE " +
-            Constants.TABLE_NAME_FOOD + " (" +
-            "Average_Fruits REAL, " +
-            "Average_Vegetables REAL, " +
-            "Average_Sugar REAL, " +
-            "Year_Num INTEGER, " +
-            "Month_Num INTEGER DEFAULT - 1);";
-
     public static final String DAYTABLE = "CREATE TABLE " +
-            Constants.TABLE_NAME_DAY + " (" +
+            TABLE_NAME_DAY + " (" +
             "Day_Num INTEGER, " +
             "Year_Num INTEGER, " +
             "Month_Num INTEGER, " +
             "Mood INTEGER, " +
-            "Food varchar(255)," +
             "Fruit INTEGER, " +
             "Vegetable INTEGER, " +
             "Sugar INTEGER, " +
@@ -84,24 +76,38 @@ public class Constants {
     //"PRIMARY KEY(Day_Num, Month_Num, Year_Num));";
 
     public static final String MONTHTABLE = "CREATE TABLE " +
-            Constants.TABLE_NAME_MONTH + " (" +
+            TABLE_NAME_MONTH + " (" +
             "Month_Num INTEGER, " +
             "Av_Exercise REAL, " +
             "Av_Mood REAL, " +
             "Count_Exercise INTEGER, " +
             "Count_Mood INTEGER, " +
+            "Count_Fruit INTEGER, " +
+            "Count_Vegetable INTEGER, " +
+            "Count_Sugar INTEGER, " +
             "Year_ID INTEGER, " +
             "FOREIGN KEY (Year_ID) REFERENCES " + Constants.TABLE_NAME_YEAR + " (Year_Num), " +
             "PRIMARY KEY (Month_Num, Year_ID));";
 
     public static final String YEARTABLE = "CREATE TABLE " +
-            Constants.TABLE_NAME_YEAR + " (" +
+            TABLE_NAME_YEAR + " (" +
             "Year_Num INTEGER PRIMARY KEY, " +
             "Count_Exercise INTEGER, " +
             "Count_Mood INTEGER, " +
+            "Count_Fruit INTEGER, " +
+            "Count_Vegetable INTEGER, " +
+            "Count_Sugar INTEGER, " +
             "Av_Exercise REAL, " +
             "Av_Mood REAL);";
 
+    public static final String SETTINGSTABLE = "CREATE TABLE " +
+            TABLE_NAME_SETTINGS + " (" +
+            "Settings_ID INTEGER, " +
+            "Fruit_Notify INTEGER DEFAULT 5, " +
+            "Vegetable_Notify INTEGER DEFAULT 5, " +
+            "Sugar_Notify INTEGER DEFAULT 5, " +
+            "Exercise_Notify INTEGER DEFAULT 5, " +
+            "PRIMARY KEY(Settings_ID));";
     public static ArrayList<String> getScenarioDataBase(){
         ArrayList<String> sceneList = new ArrayList<>();
 
@@ -158,7 +164,13 @@ public class Constants {
             case "Mood":
                 return Color.BLUE;
             case "Exercise":
+                return Color.rgb(255, 128, 0);
+            case "Fruit":
                 return Color.RED;
+            case "Vegetable":
+                return Color.rgb(0, 204, 0);
+            case "Sugar":
+                return Color.rgb(204, 0, 204);
         }
         return Color.BLACK;
     }

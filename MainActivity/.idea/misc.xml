@@ -22,13 +22,19 @@
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/drawable/ic_baseline_elderly_24.xml" value="0.2921875" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2921875" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/drawable/input_dot.xml" value="0.2921875" />
-        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_adventure_log.xml" value="0.335" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_adventure_scenario.xml" value="0.20572916666666666" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_battle.xml" value="0.1" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_calendar.xml" value="0.375" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_disclaimer.xml" value="0.18020833333333333" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_exercise.xml" value="0.19021739130434784" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_food.xml" value="0.2269021739130435" />
-        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_graphs.xml" value="0.25" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_graphs.xml" value="0.1" />
         <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_mood.xml" value="0.19021739130434784" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/layout/popup_settings.xml" value="0.335" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.265625" />
+        <entry key="..\:/Users/phid8/AndroidStudioProjects/MainActivity/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.265625" />
         <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.14907407407407408" />
         <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable/enemy_health.xml" value="0.14907407407407408" />
         <entry key="..\:/Users/phid8/Documents/GitHub/SeniorProjectMentalHealthApp/MainActivity/app/src/main/res/drawable/exp_bar.xml" value="0.26458333333333334" />

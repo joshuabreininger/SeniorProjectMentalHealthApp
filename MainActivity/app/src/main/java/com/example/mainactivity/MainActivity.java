@@ -10,16 +10,28 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+
+
 import android.os.Bundle;
 import android.text.Html;
+
+
+import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.ImageView;
+
 import android.widget.ListView;
 import android.widget.ProgressBar;
+
+import android.widget.RadioButton;
 import android.widget.TextView;
+
+
 
 import com.example.mainactivity.Data.DataBaseHandler;
 
@@ -31,12 +43,19 @@ import com.example.mainactivity.campaign.Campaign;
 import com.example.mainactivity.campaign.Player;
 import com.example.mainactivity.campaign.Enemy;
 import com.github.mikephil.charting.charts.BarChart;
+
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+
+
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+
+
+import com.google.android.material.slider.Slider;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -75,13 +94,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView[] dotsIndicators;
 
     //log all-in-one variables
-    private EditText newcontactpopup_firstname, newcontactpopup_lastname;
-    private Button newcontactpopup_save, newcontactpopup_cancel, button_test;
     private DataBaseHandler db;
     private ListView listview;
 
     //settings menu variables
-    private Button settings_button, settings_button_close;
+    private Button settings_button, settings_button_close, settings_button_save;
+    private EditText settings1_edittext, settings2_edittext, settings3_edittext, settings4_edittext;
 
     //graphs menu variables
     private Button graphs_button, graphs_button_close, graphs_button_change;
@@ -92,9 +110,11 @@ public class MainActivity extends AppCompatActivity {
     //log all-in-one mood menu variables
     private Button log_all_in_one_button, mood_button_ok, mood_button_skip;
     private EditText moodInput_edittext;
+    private Slider moodInput_slider;
 
     //log all-in-one food menu variables
     private Button food_button_ok, food_button_skip;
+    private RadioButton fruit_radio, vegetable_radio, highSugar_radio, fruit_radio_controller, vegetable_radio_controller, highSugar_radio_controller;
     private EditText foodInput_edittext;
 
     //log all-in-one exercise menu variables
@@ -106,34 +126,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView scenario_bg1, scenario_bg2, scenario_bg3, scenario_bg4, scenario_bg5, scenario_bg6, opponent;
     private TextView scenario_text;
 
+    //disclaimer popup vairables
+    private Button disclaimer_ok;
+
     //battle system
     private Button attack, magicAttack, goToScenario, battleClose;
     private TextView enemyHealthTxt, playerManaTxt, playerExpText;
     private ProgressBar enemyHealthBar, playerManaBar, playerExpBar;
     private ImageView player, enemy;
-
-    //unused test popup
-    public void createNewContactDialog(){
-        dialogBuilder = new AlertDialog.Builder(this);
-        final View contactPopupView = getLayoutInflater().inflate(R.layout.popup, null);
-        newcontactpopup_firstname = (EditText) contactPopupView.findViewById(R.id.newcontactpopup_firstname);
-        newcontactpopup_lastname = (EditText) contactPopupView.findViewById(R.id.newcontactpopup_lastname);
-
-        newcontactpopup_save = (Button) contactPopupView.findViewById(R.id.saveButton);
-        newcontactpopup_cancel = (Button) contactPopupView.findViewById(R.id.cancelButton);
-
-        dialogBuilder.setView(contactPopupView);
-        dialog = dialogBuilder.create();
-        dialog.show();
-
-        newcontactpopup_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View v) {
-                //define cancel button here!
-                dialog.dismiss();
-            }
-        });
-    }
 
     /*
     // This opens the calendar menu
@@ -177,17 +177,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void openDisclaimer(){
+        //gets the layout of the disclaimer popup
+        final View disclaimerView = getLayoutInflater().inflate(R.layout.popup_disclaimer, null);
+
+        //creates and shows the popup
+        dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setView(disclaimerView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        //ok button for the mood menu
+        disclaimer_ok = (Button) disclaimerView.findViewById(R.id.okButton);
+
+        //click listener for the disclaimer ok button
+        disclaimer_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
     /*
     // opens the mood menus for the user to input their daily information
      */
     //function called when clicking the log all-in-one button, opens the mood menu
     public void openMoodMenu(){
-        dataSetTypes.clear();
         //gets the layout of the mood menu
         final View moodMenuView = getLayoutInflater().inflate(R.layout.popup_mood, null);
 
-        //edittext for the mood rating
-        moodInput_edittext = (EditText) moodMenuView.findViewById(R.id.moodRatingInput);
+        //mood rating slider
+        moodInput_slider = (Slider) moodMenuView.findViewById(R.id.moodSlider);
 
         //creates and shows the popup
         dialogBuilder = new AlertDialog.Builder(this);
@@ -207,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
                 saveMood();
                 //refreshdata();
+
                 dialog.dismiss();
                 openFoodMenu();
             }
@@ -228,9 +250,6 @@ public class MainActivity extends AppCompatActivity {
         //gets the layout of the food menu
         final View foodMenuView = getLayoutInflater().inflate(R.layout.popup_food, null);
 
-        //edittext for the food groups
-        foodInput_edittext = (EditText) foodMenuView.findViewById(R.id.foodGroupInput);
-
         //creates and shows the popup
         dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(foodMenuView);
@@ -241,12 +260,69 @@ public class MainActivity extends AppCompatActivity {
         food_button_ok = (Button) foodMenuView.findViewById(R.id.okButton);
         food_button_skip = (Button) foodMenuView.findViewById(R.id.skipButton);
 
+        //the radio buttons
+        fruit_radio = (RadioButton) foodMenuView.findViewById(R.id.radio_fruit);
+        vegetable_radio = (RadioButton) foodMenuView.findViewById(R.id.radio_vegetables);
+        highSugar_radio = (RadioButton) foodMenuView.findViewById(R.id.radio_highSugar);
+
+        //controllers for radio buttons since they cannot be unchecked directly
+        fruit_radio_controller = (RadioButton) foodMenuView.findViewById(R.id.radio_fruit_controller);
+        vegetable_radio_controller = (RadioButton) foodMenuView.findViewById(R.id.radio_vegetable_controller);
+        highSugar_radio_controller = (RadioButton) foodMenuView.findViewById(R.id.radio_highSugar_controller);
+
+        //click listener for the fruit radio button
+        fruit_radio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                if (fruit_radio_controller.isChecked() == false)
+                {
+                    fruit_radio_controller.setChecked(true);
+                }
+                else if (fruit_radio_controller.isChecked() == true)
+                {
+                    fruit_radio_controller.setChecked(false);
+                    fruit_radio.setChecked(false);
+                }
+            }
+        });
+
+        //click listener for the vegetable radio button
+        vegetable_radio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                if (vegetable_radio_controller.isChecked() == false)
+                {
+                    vegetable_radio_controller.setChecked(true);
+                }
+                else if (vegetable_radio_controller.isChecked() == true)
+                {
+                    vegetable_radio_controller.setChecked(false);
+                    vegetable_radio.setChecked(false);
+                }
+            }
+        });
+
+        //click listener for the high sugar radio button
+        highSugar_radio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                if (highSugar_radio_controller.isChecked() == false)
+                {
+                    highSugar_radio_controller.setChecked(true);
+                }
+                else if (highSugar_radio_controller.isChecked() == true)
+                {
+                    highSugar_radio_controller.setChecked(false);
+                    highSugar_radio.setChecked(false);
+                }
+            }
+        });
+
         //click listener for the food menu ok button
         food_button_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v) {
                 //insert save stuff here
-
                 saveFood();
                 //refreshdata();
 
@@ -274,6 +350,14 @@ public class MainActivity extends AppCompatActivity {
         //edittext for the exercise time
         exerciseInput_edittext = (EditText) exerciseMenuView.findViewById(R.id.exerciseTimeInput);
 
+        class NumericKeyBoardTransformationMethod extends PasswordTransformationMethod {
+            @Override
+            public CharSequence getTransformation(CharSequence source, View view) {
+                return source;
+            }
+        }
+        exerciseInput_edittext.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+
         //creates and shows the popup
         dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(exerciseMenuView);
@@ -294,6 +378,8 @@ public class MainActivity extends AppCompatActivity {
                 //refreshdata();
 
                 finishedLog();
+
+
             }
         });
 
@@ -312,8 +398,50 @@ public class MainActivity extends AppCompatActivity {
                 currCal.get(Calendar.MONTH), currCal.get(Calendar.YEAR));
         updateCalendarView();
         if(firstInputToday) {
+            calculateBuffs();
             generateScenario(true);
             db.updateManaRegen();
+        }
+    }
+
+    private void calculateBuffs(){
+        boolean fruit = false, vegetable = false;
+        int exerciseMin = 0, damageBuff = 0;
+        for (int i=0; i<dataSetTypes.size(); i++){
+            if(dataSetTypes.get(i).equals("Fruit")) {
+                if (items.get(i).equals("true")) {
+                    fruit = true;
+                }
+                Log.d("READ IN FRUIT", "value: " + fruit);
+            }
+            if(dataSetTypes.get(i).equals("Vegetable")){
+                if(items.get(i).equals("true")){
+                    vegetable = true;
+                }
+                Log.d("READ IN VEGETABLE", "value: " + vegetable);
+            }
+            if(dataSetTypes.get(i).equals("Exercise")){
+                exerciseMin = Integer.parseInt(items.get(i));
+                Log.d("READ IN EXERCISE", "value: " + exerciseMin);
+            }
+        }
+        if(fruit){
+            db.updateManaRegen(10);
+        }
+
+        if(exerciseMin>=120 && (vegetable || fruit)){
+            db.updateNumTurns(1,true);
+        }
+
+        if(vegetable){
+            damageBuff += 40;
+        }
+        damageBuff += exerciseMin/2;
+        if(damageBuff >=100){
+            damageBuff = 100;
+        }
+        if(damageBuff >0) {
+            db.setDamageMod(damageBuff);
         }
     }
 
@@ -408,7 +536,7 @@ public class MainActivity extends AppCompatActivity {
             opponent.setVisibility(View.VISIBLE);
         }
         else{
-            scenario_text.setText("");
+            scenario_text.setText("The Hero got pretty lost.");
             opponent.setVisibility(View.GONE);
         }
 
@@ -430,13 +558,42 @@ public class MainActivity extends AppCompatActivity {
         dialog = dialogBuilder.create();
         dialog.show();
 
-        //close button for the settings menu
-        settings_button_close = (Button) settingsMenuView.findViewById(R.id.close_scene_button);
+        //edittexts for settings
+        settings1_edittext = (EditText) settingsMenuView.findViewById(R.id.setting1Input);
+        settings2_edittext = (EditText) settingsMenuView.findViewById(R.id.setting2Input);
+        settings3_edittext = (EditText) settingsMenuView.findViewById(R.id.setting3Input);
+        settings4_edittext = (EditText) settingsMenuView.findViewById(R.id.setting4Input);
+
+        //removes the hidden characters from the settings inputs
+        class NumericKeyBoardTransformationMethod extends PasswordTransformationMethod {
+            @Override
+            public CharSequence getTransformation(CharSequence source, View view) {
+                return source;
+            }
+        }
+        settings1_edittext.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+        settings2_edittext.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+        settings3_edittext.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+        settings4_edittext.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+
+
+        //close and save buttons for the settings menu
+        settings_button_close = (Button) settingsMenuView.findViewById(R.id.closeButton);
+        settings_button_save = (Button) settingsMenuView.findViewById(R.id.saveButton);
 
         //click listener for the settings menu close button
         settings_button_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v) {
+                dialog.dismiss();
+            }
+        });
+
+        //click listener for the settings menu save button
+        settings_button_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                saveSettings();
                 dialog.dismiss();
             }
         });
@@ -452,13 +609,13 @@ public class MainActivity extends AppCompatActivity {
 
         //creates and shows the popup
         if(addPopup) {
-            dialogBuilder = new AlertDialog.Builder(this);
+            dialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault);
             dialogBuilder.setView(graphsMenuView);
             dialog = dialogBuilder.create();
             dialog.show();
 
             //close button for the graphs menu
-            graphs_button_close = (Button) graphsMenuView.findViewById(R.id.close_scene_button);
+            graphs_button_close = (Button) graphsMenuView.findViewById(R.id.closeButton);
             graphs_button_change = (Button) graphsMenuView.findViewById(R.id.changegraphbutton);
             graphs_button_change.setText(chartList.get(chartIndex));
 
@@ -479,6 +636,7 @@ public class MainActivity extends AppCompatActivity {
                     openGraphsMenu(false);
                 }
             });
+
             dayBarChart = graphsMenuView.findViewById(R.id.daybarchart);
             weekBarChart = graphsMenuView.findViewById(R.id.weekbarchart);
             monthBarChart = graphsMenuView.findViewById(R.id.monthbarchart);
@@ -495,7 +653,23 @@ public class MainActivity extends AppCompatActivity {
             weekBarChart.getDescription().setEnabled(false);
             monthBarChart.getDescription().setEnabled(false);
             yearBarChart.getDescription().setEnabled(false);
+            dayBarChart.getAxisRight().setEnabled(false);
+            weekBarChart.getAxisRight().setEnabled(false);
+            monthBarChart.getAxisRight().setEnabled(false);
+            yearBarChart.getAxisRight().setEnabled(false);
         }
+
+        dayBarChart.getAxisLeft().resetAxisMaximum();
+        weekBarChart.getAxisLeft().resetAxisMaximum();
+        monthBarChart.getAxisLeft().resetAxisMaximum();
+        yearBarChart.getAxisLeft().resetAxisMaximum();
+        if (chartIndex == 0){
+            dayBarChart.getAxisLeft().setAxisMaxValue(10);
+            weekBarChart.getAxisLeft().setAxisMaxValue(10);
+            monthBarChart.getAxisLeft().setAxisMaxValue(10);
+            yearBarChart.getAxisLeft().setAxisMaxValue(10);
+        }
+
         loadDayBarChartData(chartList.get(chartIndex));
         loadWeekBarChartData(chartList.get(chartIndex));
         loadMonthBarCharData(chartList.get(chartIndex));
@@ -511,14 +685,21 @@ public class MainActivity extends AppCompatActivity {
         xaxis.setGranularity(1);
         xaxis.setGranularityEnabled(true);
         xaxis.setDrawGridLines(false);
-
-        ArrayList<BarEntry> values = new ArrayList<>();
         //ArrayList<String> graphList = db.getGraphTypes();
-        ArrayList<String> graphList = new ArrayList<>();
-        graphList.add(setting);
+        ArrayList<String> graphList;
+
+        if(setting.equals("Food")) {
+            graphList = db.getFoodTypes();
+        }
+        else{
+            graphList = new ArrayList<>();
+            graphList.add(setting);
+        }
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         for(String type : graphList) {
-            Calendar thisWeek = currCal;
+            ArrayList<BarEntry> values = new ArrayList<>();
+            Calendar thisWeek = Calendar.getInstance();;
+            thisWeek.set(currCal.get(Calendar.YEAR), currCal.get(Calendar.MONTH), currCal.get(Calendar.DAY_OF_MONTH));
             thisWeek.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             for (int i = 0; i < 7; i++) {
                 thisWeek.set(Calendar.DAY_OF_WEEK, i + 1);
@@ -532,7 +713,11 @@ public class MainActivity extends AppCompatActivity {
                 float y = 0;
                 try {
                     y = Float.parseFloat(out.get(0));
-                } catch( Exception e){ }
+                } catch( Exception e){
+                    if(out.size() > 0 && out.get(0).equals("true")){
+                        y = 1;
+                    }
+                }
                 values.add(new BarEntry(x, y));
             }
             BarDataSet set = new BarDataSet(values, "Daily " + type);
@@ -540,10 +725,16 @@ public class MainActivity extends AppCompatActivity {
             set.setDrawValues(false);
             dataSets.add(set);
         }
-
         BarData data = new BarData(dataSets);
+        if(setting.equals("Food")) {
+            data.setBarWidth(0.20f);
+        }
         data.setValueTextSize(12f);
         dayBarChart.setData(data);
+
+        if(setting.equals("Food")) {
+            dayBarChart.groupBars(0.3f, 0.044f, 0.08f);
+        }
         dayBarChart.invalidate();
     }
 
@@ -556,36 +747,60 @@ public class MainActivity extends AppCompatActivity {
         xaxis.setGranularity(1);
         xaxis.setGranularityEnabled(true);
         xaxis.setDrawGridLines(false);
-
-        String[] moodList = db.getItemsByMonth(setting,currCal.get(Calendar.MONTH),currCal.get(Calendar.YEAR));
-        ArrayList<BarEntry> values = new ArrayList<>();
-        for (int i=0; i<5; i++){
-            float sum = 0;
-            int count = 0;
-            for(int j=0;j<7;j++){
-                if(i * 7 + j >= moodList.length){
-                    break;
-                }
-                if(moodList[i * 7 + j] != null) {
-                    sum += Integer.parseInt(moodList[i * 7 + j]);
-                    count++;
-                }
-            }
-            float avg = 0;
-            if (count >0){
-                avg = sum/count;
-            }
-            values.add(new BarEntry(i, avg));
-        }
-        BarDataSet set1 = new BarDataSet(values, "Average Weekly " + setting);
-        set1.setColor(Constants.getGraphColor(setting));
-        set1.setDrawValues(false);
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1);
 
+        ArrayList<String> graphList;
+
+        if(setting.equals("Food")) {
+            graphList = db.getFoodTypes();
+        }
+        else{
+            graphList = new ArrayList<>();
+            graphList.add(setting);
+        }
+
+        for(String type : graphList) {
+            String[] moodList = db.getItemsByMonth(type, currCal.get(Calendar.MONTH), currCal.get(Calendar.YEAR));
+            ArrayList<BarEntry> values = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                float sum = 0;
+                int count = 0;
+                for (int j = 0; j < 7; j++) {
+                    if (i * 7 + j >= moodList.length) {
+                        break;
+                    }
+                    if (moodList[i * 7 + j] != null) {
+                        try {
+                            sum += Integer.parseInt(moodList[i * 7 + j]);
+                        }
+                        catch (Exception e){
+                            if (moodList[i * 7 + j].equals("true")){
+                                sum += 1;
+                            }
+                        }
+                        count++;
+                    }
+                }
+                float avg = 0;
+                if (count > 0) {
+                    avg = sum / count;
+                }
+                values.add(new BarEntry(i, avg));
+            }
+            BarDataSet set1 = new BarDataSet(values, "Average Weekly " + type);
+            set1.setColor(Constants.getGraphColor(type));
+            set1.setDrawValues(false);
+            dataSets.add(set1);
+        }
         BarData data = new BarData(dataSets);
+        if(setting.equals("Food")) {
+            data.setBarWidth(0.20f);
+        }
         data.setValueTextSize(12f);
         weekBarChart.setData(data);
+        if(setting.equals("Food")) {
+            weekBarChart.groupBars(0.3f, 0.044f, 0.08f);
+        }
         weekBarChart.invalidate();
     }
 
@@ -598,25 +813,43 @@ public class MainActivity extends AppCompatActivity {
         xaxis.setGranularity(1);
         xaxis.setGranularityEnabled(true);
         xaxis.setDrawGridLines(false);
-
-        String[] moodList = db.getAvgMonthInYear(setting,currCal.get(Calendar.YEAR));
-        ArrayList<BarEntry> values = new ArrayList<>();
-        for (int i=0; i<12; i++){
-            float val = 0;
-            if(moodList[i] != null && !moodList[i].equals("")){
-                val = Float.parseFloat(moodList[i]);
-            }
-            values.add(new BarEntry(i, val));
-        }
-        BarDataSet set1 = new BarDataSet(values, "Average Monthly " + setting);
-        set1.setColor(Constants.getGraphColor(setting));
-        set1.setDrawValues(false);
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1);
+
+        ArrayList<String> graphList;
+
+        if(setting.equals("Food")) {
+            graphList = db.getFoodTypes();
+        }
+        else{
+            graphList = new ArrayList<>();
+            graphList.add(setting);
+        }
+
+        for(String type : graphList) {
+            String[] moodList = db.getAvgMonthInYear(type, currCal.get(Calendar.YEAR));
+            ArrayList<BarEntry> values = new ArrayList<>();
+            for (int i = 0; i < 12; i++) {
+                float val = 0;
+                if (moodList[i] != null && !moodList[i].equals("")) {
+                    val = Float.parseFloat(moodList[i]);
+                }
+                values.add(new BarEntry(i, val));
+            }
+            BarDataSet set1 = new BarDataSet(values, "Average Monthly " + setting);
+            set1.setColor(Constants.getGraphColor(type));
+            set1.setDrawValues(false);
+            dataSets.add(set1);
+        }
 
         BarData data = new BarData(dataSets);
+        if(setting.equals("Food")) {
+            data.setBarWidth(0.20f);
+        }
         data.setValueTextSize(12f);
         monthBarChart.setData(data);
+        if(setting.equals("Food")) {
+            monthBarChart.groupBars(0.4f, 0.044f, 0.08f);
+        }
         monthBarChart.invalidate();
     }
 
@@ -634,25 +867,42 @@ public class MainActivity extends AppCompatActivity {
         xaxis.setGranularity(1);
         xaxis.setGranularityEnabled(true);
         xaxis.setDrawGridLines(false);
-
-        String[] moodList = db.getAvgYearList(setting,currCal.get(Calendar.YEAR), 7);
-        ArrayList<BarEntry> values = new ArrayList<>();
-        for (int i=0; i < 7; i++){
-            float val = 0;
-            if(moodList[i] != null && !moodList[i].equals("")){
-                val = Float.parseFloat(moodList[i]);
-            }
-            values.add(new BarEntry(i, val));
-        }
-        BarDataSet set1 = new BarDataSet(values, "Average Yearly " + setting);
-        set1.setColor(Constants.getGraphColor(setting));
-        set1.setDrawValues(false);
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1);
 
+        ArrayList<String> graphList;
+
+        if(setting.equals("Food")) {
+            graphList = db.getFoodTypes();
+        }
+        else{
+            graphList = new ArrayList<>();
+            graphList.add(setting);
+        }
+
+        for(String type : graphList) {
+            String[] moodList = db.getAvgYearList(type, currCal.get(Calendar.YEAR), 7);
+            ArrayList<BarEntry> values = new ArrayList<>();
+            for (int i = 0; i < 7; i++) {
+                float val = 0;
+                if (moodList[i] != null && !moodList[i].equals("")) {
+                    val = Float.parseFloat(moodList[i]);
+                }
+                values.add(new BarEntry(i, val));
+            }
+            BarDataSet set1 = new BarDataSet(values, "Average Yearly " + setting);
+            set1.setColor(Constants.getGraphColor(type));
+            set1.setDrawValues(false);
+            dataSets.add(set1);
+        }
         BarData data = new BarData(dataSets);
+        if(setting.equals("Food")) {
+            data.setBarWidth(0.20f);
+        }
         data.setValueTextSize(12f);
         yearBarChart.setData(data);
+        if(setting.equals("Food")) {
+            yearBarChart.groupBars(0.3f, 0.044f, 0.08f);
+        }
         yearBarChart.invalidate();
     }
 
@@ -696,8 +946,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     // updates the week label to match the current date or the date selected
     public void updateCalendarView(){
+
         TextView tvdays = (TextView) findViewById(R.id.calendarMiniView);
         TextView tvMonths = (TextView) findViewById(R.id.monthTextView);
 
@@ -741,6 +993,8 @@ public class MainActivity extends AppCompatActivity {
         tvMonths.setText(month);
 
         //adds in the indicators for the week
+
+
         for (int i =0; i<7 ; i++){
             thisWeek.set(Calendar.DAY_OF_WEEK, i+1);
             ArrayList<String> variables =  db.getDataTypes();
@@ -789,27 +1043,6 @@ public class MainActivity extends AppCompatActivity {
         graphs_button = (Button) findViewById(R.id.buttonGraph);
         adventure_log_button = (Button) findViewById(R.id.buttonViewAdventure);
         updateDateTime();
-
-        //calls the notification creation function
-        createNotificationChannel();
-
-        //set the intent of the notification to be used when building it (what happens when you click it)
-        Intent notifIntent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notifIntent, 0);
-
-        //notification builder
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "testChannel")
-                .setSmallIcon(R.drawable.input_dot)
-                .setContentTitle("Test Notification")
-                .setContentText("This is a test notification.")
-                .setContentIntent(contentIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        //notification manager
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-        //calls the notification
-        notificationManager.notify(100, builder.build());
 
         //click listener for changing calender
         monthView.setOnClickListener(new View.OnClickListener() {
@@ -860,7 +1093,10 @@ public class MainActivity extends AppCompatActivity {
         //click listener for opening the graphs menu
         graphs_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                updateDateTime();
                 openGraphsMenu(true);
+                updateDateTime();
+                updateCalendarView();
             }
         });
 
@@ -931,6 +1167,77 @@ public class MainActivity extends AppCompatActivity {
             monthView.setTextColor(Color.WHITE);
             CalendarView.setTextColor(Color.WHITE);
         }
+        openDisclaimer();
+
+        //check if we should play a fruit notification
+        int fruitNotificationPlay = 0;
+        fruitNotificationPlay = db.checkNotificationTriggerFruit(monthCheck);
+
+        //check if we should play a vegetable notification
+        int vegetableNotificationPlay = 0;
+        vegetableNotificationPlay = db.checkNotificationTriggerVegetable(monthCheck);
+
+        //check if we should play a high sugar notification
+        int sugarNotificationPlay = 0;
+        sugarNotificationPlay = db.checkNotificationTriggerSugar(monthCheck);
+
+        //check if we should play an exercise notification
+        int exerciseNotificationPlay = 0;
+        exerciseNotificationPlay = db.checkNotificationTriggerExercise(monthCheck);
+
+        //calls the notification creation function
+        createNotificationChannel();
+
+        //set the intent of the notification to be used when building it (what happens when you click it)
+        Intent notifIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notifIntent, 0);
+
+        //notification builder
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "testChannel")
+                .setSmallIcon(R.drawable.input_dot)
+                .setContentTitle("Fruit Notification")
+                .setContentText("Please consider adding some fruit to your diet.")
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationCompat.Builder builder2 = new NotificationCompat.Builder(this, "testChannel")
+                .setSmallIcon(R.drawable.input_dot)
+                .setContentTitle("Vegetable Notification")
+                .setContentText("Please consider adding some vegetables to your diet.")
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationCompat.Builder builder3 = new NotificationCompat.Builder(this, "testChannel")
+                .setSmallIcon(R.drawable.input_dot)
+                .setContentTitle("High Sugar Notification")
+                .setContentText("Please consider lessening your sugar intake.")
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationCompat.Builder builder4 = new NotificationCompat.Builder(this, "testChannel")
+                .setSmallIcon(R.drawable.input_dot)
+                .setContentTitle("Exercise Notification")
+                .setContentText("Please consider doing some exercise sometime.")
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        //notification manager
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(100, builder.build());
+
+        //calls the notification
+        if (fruitNotificationPlay == 1) {
+            notificationManager.notify(100, builder.build());
+        }
+        if (vegetableNotificationPlay == 1) {
+            notificationManager.notify(101, builder2.build());
+        }
+        if (sugarNotificationPlay == 1) {
+            notificationManager.notify(102, builder3.build());
+        }
+        if (sugarNotificationPlay == 1) {
+            notificationManager.notify(103, builder4.build());
+        }
     }
 
     private void createNotificationChannel() {
@@ -956,7 +1263,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveMood(){
-        String moodValue = moodInput_edittext.getText().toString();
+        db = new DataBaseHandler(getApplicationContext());
+
+        String moodValue = (int) moodInput_slider.getValue() + "";
 
         items.add(moodValue);
         //db.Save(moodValue, "Mood", 1,2,3);
@@ -967,12 +1276,20 @@ public class MainActivity extends AppCompatActivity {
     private void saveFood(){
         db = new DataBaseHandler(getApplicationContext());
 
+        boolean fruitCheck = fruit_radio.isChecked();
+        boolean vegetableCheck = vegetable_radio.isChecked();
+        boolean highSugarCheck = highSugar_radio.isChecked();
 
-        String foodGroups = foodInput_edittext.getText().toString();
+        //String foodGroups = foodInput_edittext.getText().toString();
 
-        items.add(foodGroups);
+        items.add(fruitCheck + "");
+        dataSetTypes.add("Fruit");
+        items.add(vegetableCheck + "");
+        dataSetTypes.add("Vegetable");
+        items.add(highSugarCheck + "");
+        dataSetTypes.add("Sugar");
 
-        dataSetTypes.add("Food");
+        //dataSetTypes.add("Food");
     }
 
     private void saveExercise(){
@@ -980,6 +1297,36 @@ public class MainActivity extends AppCompatActivity {
         items.add(exerciseTime);
         dataSetTypes.add("Exercise");
     }
+
+    private void saveSettings(){
+        String fruitSettings = settings1_edittext.getText().toString();
+        String vegetableSettings = settings2_edittext.getText().toString();
+        String sugarSettings = settings3_edittext.getText().toString();
+        String exerciseSettings = settings4_edittext.getText().toString();
+
+        if (fruitSettings.matches(""))
+            fruitSettings = "5";
+        if (vegetableSettings.matches(""))
+            vegetableSettings = "5";
+        if (sugarSettings.matches(""))
+            sugarSettings = "5";
+        if (exerciseSettings.matches(""))
+            exerciseSettings = "5";
+
+        db.saveNotificationSettings(fruitSettings, vegetableSettings, sugarSettings, exerciseSettings);
+        db.checkNotificationTriggerFruit(3);
+    }
+
+    //template
+    /*private void saveToDataBase(){
+        db = new DataBaseHandler(getApplicationContext());
+        Item item = new Item();
+
+        String value = newcontactpopup_firstname.getText().toString();
+
+        item.setInput(value);
+        db.Save(item, [type], 1, 2, 3);
+    }*/
 
     public void updateDateTime() {
         Calendar cal = Calendar.getInstance();
@@ -1021,36 +1368,36 @@ public class MainActivity extends AppCompatActivity {
         enemy = battleMenuView.findViewById(R.id.opponent_image);
 
         int monthCheck = currCal.get(Calendar.MONTH);
-        scenario_bg1 = (ImageView) battleMenuView.findViewById(R.id.testBG1);
-        scenario_bg2 = (ImageView) battleMenuView.findViewById(R.id.testBG2);
-        scenario_bg3 = (ImageView) battleMenuView.findViewById(R.id.testBG3);
-        scenario_bg4 = (ImageView) battleMenuView.findViewById(R.id.testBG4);
-        scenario_bg5 = (ImageView) battleMenuView.findViewById(R.id.testBG5);
-        scenario_bg6 = (ImageView) battleMenuView.findViewById(R.id.testBG6);
-        scenario_bg1.setAlpha(0f);
-        scenario_bg2.setAlpha(0f);
-        scenario_bg3.setAlpha(0f);
-        scenario_bg4.setAlpha(0f);
-        scenario_bg5.setAlpha(0f);
-        scenario_bg6.setAlpha(0f);
+        ImageView bg1 = (ImageView) battleMenuView.findViewById(R.id.testBG1);
+        ImageView bg2 = (ImageView) battleMenuView.findViewById(R.id.testBG2);
+        ImageView bg3 = (ImageView) battleMenuView.findViewById(R.id.testBG3);
+        ImageView bg4 = (ImageView) battleMenuView.findViewById(R.id.testBG4);
+        ImageView bg5 = (ImageView) battleMenuView.findViewById(R.id.testBG5);
+        ImageView bg6 = (ImageView) battleMenuView.findViewById(R.id.testBG6);
+        bg1.setAlpha(0f);
+        bg2.setAlpha(0f);
+        bg3.setAlpha(0f);
+        bg4.setAlpha(0f);
+        bg5.setAlpha(0f);
+        bg6.setAlpha(0f);
 
         if (monthCheck >= 0 && monthCheck <= 1) {
-            scenario_bg1.setAlpha(1f);
+            bg1.setAlpha(1f);
         }
         else if (monthCheck >= 2 && monthCheck <= 3) {
-            scenario_bg2.setAlpha(1f);
+            bg2.setAlpha(1f);
         }
         else if (monthCheck >= 4 && monthCheck <= 5) {
-            scenario_bg3.setAlpha(1f);
+            bg3.setAlpha(1f);
         }
         else if (monthCheck >= 6 && monthCheck <= 7) {
-            scenario_bg4.setAlpha(1f);
+            bg4.setAlpha(1f);
         }
         else if (monthCheck >= 8 && monthCheck <= 9) {
-            scenario_bg5.setAlpha(1f);
+            bg5.setAlpha(1f);
         }
         else if (monthCheck >= 10 && monthCheck <= 11) {
-            scenario_bg6.setAlpha(1f);
+            bg6.setAlpha(1f);
         }
 
         Player p = db.retrievePlayer();
@@ -1061,8 +1408,9 @@ public class MainActivity extends AppCompatActivity {
         attack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v) {
-                battle.attack(0,0);
+                battle.attack(0);
                 updatePlayerAndEnemyDatabase();
+                db.setDamageMod(0);
                 updateBattleUI();
             }
         });
@@ -1070,7 +1418,7 @@ public class MainActivity extends AppCompatActivity {
         magicAttack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v) {
-                battle.attack(1,0);
+                battle.attack(1);
                 updatePlayerAndEnemyDatabase();
                 updateBattleUI();
             }
@@ -1091,7 +1439,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (battle.isEnemyGone()){
-            battle.newenemy(db.getNewEnemy());
+            battle.newEnemy(db.getNewEnemy());
             updatePlayerAndEnemyDatabase();
         }
         updateBattleUI();

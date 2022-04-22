@@ -8,4 +8,5 @@ public class Player {
     public int manaRechargeRate;
     public int exp;
     public int numberOfTurns;
+    public int damgeMod;
 }

@@ -18,23 +18,54 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     private ArrayList<String> types;
     private ArrayList<String> longTermTypes;
+    private ArrayList<String> graphTypes;
+
 
     public DataBaseHandler(Context context) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
         types = new ArrayList<>();
         longTermTypes = new ArrayList<>();
+        graphTypes = new ArrayList<>();
         setDataTypes();
     }
-    private void setDataTypes(){
-        types.add("Mood");
-        types.add("Food");
-        types.add("Exercise");
-        longTermTypes.add("Mood");
-        longTermTypes.add("Exercise");
+
+    public void clearDataBase(Context context){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_FOOD);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_DAY);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_MONTH);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_YEAR);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_SCENARIO);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_ENEMY_LIST);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_PLAYER);
+        db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME_SETTINGS);
+        onCreate(db);
     }
 
-    public ArrayList<String> getGraphTypes() {return longTermTypes;}
+    private void setDataTypes(){
+        types.add("Mood");
+        types.add("Exercise");
+        types.add("Fruit");
+        types.add("Vegetable");
+        types.add("Sugar");
+        longTermTypes.add("Mood");
+        longTermTypes.add("Exercise");
+        longTermTypes.add("Fruit");
+        longTermTypes.add("Vegetable");
+        longTermTypes.add("Sugar");
+        graphTypes.add("Mood");
+        graphTypes.add("Exercise");
+        graphTypes.add("Food");
+    }
 
+    public ArrayList<String> getGraphTypes() { return graphTypes; }
+    public ArrayList<String> getFoodTypes() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Fruit");
+        list.add("Vegetable");
+        list.add("Sugar");
+        return list;
+    }
     public ArrayList<String> getDataTypes(){
         return types;
     }
@@ -44,10 +75,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL(Constants.AVERAGEFOOD);
         db.execSQL(Constants.DAYTABLE);
         db.execSQL(Constants.MONTHTABLE);
         db.execSQL(Constants.YEARTABLE);
+        db.execSQL(Constants.SETTINGSTABLE);
         db.execSQL(Constants.SCENARIOTABLE);
         db.execSQL(Constants.PLAYERTABLE);
         db.execSQL(Constants.ENEMYTABLELIST);
@@ -65,8 +96,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         player stats
          */
         String input = "INSERT OR REPLACE INTO  " + Constants.TABLE_PLAYER +
-                " (Damage, Exp, Mana, Max_Mana, Magic_Damage, Mana_Recharge,Player_ID) " +
-                "VALUES (100, 0, 100, 100, 200, 30, 0);";
+                " (Damage, Exp, Mana, Max_Mana, Magic_Damage, Mana_Recharge,Player_ID, Damage_Mod) " +
+                "VALUES (100, 0, 100, 100, 200, 30, 0, 0);";
 
         db.execSQL(input);
 
@@ -120,16 +151,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             firstInputToday = false;
         }
         else{
-            updateNumTurns(1);
+            updateNumTurns(1,false);
         }
-
         for(int i =0; i<items.size(); i++){
             columns += types.get(i);
 
             String item = items.get(i);
             String textType;
             if (isNumeric(item)){
-                textType = ""+item;
+                textType = item;
             }
             else {
                 textType = "\"" + item + "\"";
@@ -159,7 +189,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String input = "INSERT OR REPLACE INTO " + Constants.TABLE_NAME_DAY +
                 " (" + columns + ") " + " VALUES (" + values + ");";
         db.execSQL(input);
-        db.close();
         return firstInputToday;
     }
 
@@ -226,49 +255,81 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     public String[] getAvgMonthInYear(String var, int year){
+        ArrayList<String> foodList = getFoodTypes();
+        SQLiteDatabase db = this.getReadableDatabase();
         String[] month = new String[12];
         for (int i=0;i < 12;i++){
             month[i] = "";
         }
-        String query = "SELECT Month_Num, Av_"+ var +" FROM " + Constants.TABLE_NAME_MONTH +
-                " WHERE Year_ID=" + year + ";";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.moveToFirst()){
-            do {
-                int monthIndex = cursor.getInt(cursor.getColumnIndexOrThrow("Month_Num"));
-                String input = cursor.getString(cursor.getColumnIndexOrThrow("Av_" + var));
-                month[monthIndex] = input;
-            } while (cursor.moveToNext());
+
+        if(foodList.contains(var)) {
+            String query = "SELECT Month_Num, Count_" + var + " FROM " + Constants.TABLE_NAME_MONTH +
+                    " WHERE Year_ID=" + year + ";";
+            Cursor cursor = db.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    int monthIndex = cursor.getInt(cursor.getColumnIndexOrThrow("Month_Num"));
+                    String input = cursor.getString(cursor.getColumnIndexOrThrow("Count_" + var));
+                    month[monthIndex] = input;
+                } while (cursor.moveToNext());
+            }
+        }
+        else{
+            String query = "SELECT Month_Num, Av_" + var + " FROM " + Constants.TABLE_NAME_MONTH +
+                    " WHERE Year_ID=" + year + ";";
+            Cursor cursor = db.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    int monthIndex = cursor.getInt(cursor.getColumnIndexOrThrow("Month_Num"));
+                    String input = cursor.getString(cursor.getColumnIndexOrThrow("Av_" + var));
+                    month[monthIndex] = input;
+                } while (cursor.moveToNext());
+            }
         }
         db.close();
         return month;
     }
 
     public String[] getAvgYearList(String var, int year, int setBack){
+        ArrayList<String> foodList = getFoodTypes();
+        SQLiteDatabase db = this.getReadableDatabase();
         String[] yearVal = new String[setBack];
         for (int i=0;i<setBack;i++){
             yearVal[i] = "";
         }
 
-        String query = "SELECT Year_Num, Av_"+ var +" FROM " + Constants.TABLE_NAME_YEAR +
-                " WHERE Year_Num >" + (year - setBack) + ";";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
+        if(foodList.contains(var)) {
+            String query = "SELECT Year_Num, Count_" + var + " FROM " + Constants.TABLE_NAME_YEAR +
+                    " WHERE Year_Num >" + (year - setBack) + ";";
+            Cursor cursor = db.rawQuery(query, null);
 
-        if (cursor.moveToFirst()){
-            do {
-                int yearIndex = cursor.getInt(cursor.getColumnIndexOrThrow("Year_Num"));
-                String input = cursor.getString(cursor.getColumnIndexOrThrow("Av_" + var));
-                yearVal[ setBack- 1 -(year-yearIndex) ] = input;
-            } while (cursor.moveToNext());
+            if (cursor.moveToFirst()) {
+                do {
+                    int yearIndex = cursor.getInt(cursor.getColumnIndexOrThrow("Year_Num"));
+                    String input = cursor.getString(cursor.getColumnIndexOrThrow("Count_" + var));
+                    yearVal[setBack - 1 - (year - yearIndex)] = input;
+                } while (cursor.moveToNext());
+            }
         }
+        else {
+            String query = "SELECT Year_Num, Av_" + var + " FROM " + Constants.TABLE_NAME_YEAR +
+                    " WHERE Year_Num >" + (year - setBack) + ";";
+            Cursor cursor = db.rawQuery(query, null);
 
+            if (cursor.moveToFirst()) {
+                do {
+                    int yearIndex = cursor.getInt(cursor.getColumnIndexOrThrow("Year_Num"));
+                    String input = cursor.getString(cursor.getColumnIndexOrThrow("Av_" + var));
+                    yearVal[setBack - 1 - (year - yearIndex)] = input;
+                } while (cursor.moveToNext());
+            }
+        }
         db.close();
         return yearVal;
     }
 
     private void updateAvgMonthYearTable(String type, String val, int month, int year, String prev){
+        ArrayList <String> foodList = getFoodTypes();
         int monthCnt = 0;
         double monthAvg = 0;
         int yearCnt = 0;
@@ -276,77 +337,153 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String avgType = "Av_" + type;
         String cntType = "Count_" + type;
 
-        String queryMonth = "SELECT " + avgType + ", " + cntType +" FROM " + Constants.TABLE_NAME_MONTH +
-                " WHERE Month_Num=" + month +
-                " AND Year_ID=" + year + ";";
-
-        String queryYear = "SELECT " + avgType + ", " + cntType +" FROM " + Constants.TABLE_NAME_YEAR +
-                " WHERE Year_Num=" + year + ";";
-
-
         SQLiteDatabase db = this.getReadableDatabase();
+
         boolean noMonth = true;
         boolean noYear = true;
-        Cursor cursor = db.rawQuery(queryMonth, null);
-        if(cursor != null && cursor.getCount() > 0) {
-            noMonth = false;
-            cursor.moveToFirst();
-            monthCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
-            monthAvg = cursor.getDouble(cursor.getColumnIndexOrThrow(avgType));
-        }
-        cursor = db.rawQuery(queryYear, null);
 
-        if(cursor != null && cursor.getCount() > 0) {
-            noYear = false;
-            cursor.moveToFirst();
-            yearCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
-            yearAvg = cursor.getDouble(cursor.getColumnIndexOrThrow(avgType));
-        }
-        if(prev == "NULL") {
-            monthAvg = (monthAvg * monthCnt + Float.parseFloat(val)) / (monthCnt + 1);
-            yearAvg = (yearAvg * yearCnt + Float.parseFloat(val)) / (yearCnt + 1);
-        }
-        else{
-            float newVal = Float.parseFloat(val);
-            float prevVal = Float.parseFloat(prev);
-            monthAvg = monthAvg + (newVal - prevVal) / (monthCnt);
-            yearAvg = yearAvg + (newVal - prevVal) / (yearCnt);
-        }
 
-        String monthCol =  "Month_Num, Year_ID, " + avgType + ", " + cntType;
-        String monthValues = month +", " + year + ", " + monthAvg + ", " +(monthCnt + 1);
+        if (foodList.contains(type)){
+            String queryMonth = "SELECT " + cntType +" FROM " + Constants.TABLE_NAME_MONTH +
+                    " WHERE Month_Num=" + month +
+                    " AND Year_ID=" + year + ";";
 
-        String yearCol =  "Year_Num, " + avgType + ", " + cntType;
-        String yearValues = year + ", " + yearAvg + ", " +(yearCnt + 1);
+            String queryYear = "SELECT " + cntType +" FROM " + Constants.TABLE_NAME_YEAR +
+                    " WHERE Year_Num=" + year + ";";
 
-        String monthInput;
-        if (noMonth) {
-            monthInput = "INSERT INTO " + Constants.TABLE_NAME_MONTH +
-                    " (" + monthCol + ")" + " VALUES (" + monthValues + ");";
-        }
-        else{
-            monthInput = "UPDATE " + Constants.TABLE_NAME_MONTH +
-                    " SET " +
-                    avgType + " = " + monthAvg + ", " +
-                    cntType + " = " + (monthCnt + 1) +
-                    " WHERE Month_Num = " + month +
-                    " AND Year_ID = " + year + ";";
-        }
-        db.execSQL(monthInput);
+            Cursor cursor = db.rawQuery(queryMonth, null);
+            if (cursor != null && cursor.getCount() > 0) {
+                noMonth = false;
+                cursor.moveToFirst();
+                monthCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
+            }
 
-        String yearInput;
-        if (noYear) {
-            yearInput = "INSERT INTO " + Constants.TABLE_NAME_YEAR +
-                    " (" + yearCol + ")" + " VALUES (" + yearValues + ");";
+            cursor = db.rawQuery(queryYear, null);
+            if (cursor != null && cursor.getCount() > 0) {
+                noYear = false;
+                cursor.moveToFirst();
+                yearCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
+            }
+            if (prev.equals("NULL")){
+                prev = "false";
+            }
+            if (!val.equals(prev)){
+                if(val.equals("true")){
+                    if (noMonth){
+                        monthCnt = 1;
+                    }
+                    else{
+                        monthCnt += 1;
+                    }
+                    if (noYear){
+                        yearCnt = 1;
+                    }
+                    else{
+                        yearCnt += 1;
+                    }
+                }
+                else{
+                    monthCnt -=1;
+                    yearCnt -=1;
+                }
+                String monthCol = "Month_Num, Year_ID, " + cntType;
+                String monthValues = month + ", " + year + ", " + monthCnt;
+
+                String yearCol = "Year_Num, " + cntType;
+                String yearValues = year + ", " + yearCnt;
+
+                String monthInput;
+                if (noMonth) {
+                    monthInput = "INSERT INTO " + Constants.TABLE_NAME_MONTH +
+                            " (" + monthCol + ")" + " VALUES (" + monthValues + ");";
+                } else {
+                    monthInput = "UPDATE " + Constants.TABLE_NAME_MONTH +
+                            " SET " +
+                            cntType + " = " + monthCnt +
+                            " WHERE Month_Num = " + month +
+                            " AND Year_ID = " + year + ";";
+                }
+                db.execSQL(monthInput);
+
+                String yearInput;
+                if (noYear) {
+                    yearInput = "INSERT INTO " + Constants.TABLE_NAME_YEAR +
+                            " (" + yearCol + ")" + " VALUES (" + yearValues + ");";
+                } else {
+                    yearInput = "UPDATE " + Constants.TABLE_NAME_YEAR +
+                            " SET " +
+                            cntType + " = " + yearCnt +
+                            " WHERE Year_Num = " + year + ";";
+                }
+                db.execSQL(yearInput);
+            }
         }
-        else{
-            yearInput = "UPDATE " + Constants.TABLE_NAME_YEAR +
-                    " SET " +
-                    avgType + " = " + yearAvg + ", " +
-                    cntType + " = " + (yearCnt + 1) +
-                    " WHERE Year_Num = " + year + ";";
+        else {
+            String queryMonth = "SELECT " + avgType + ", " + cntType +" FROM " + Constants.TABLE_NAME_MONTH +
+                    " WHERE Month_Num=" + month +
+                    " AND Year_ID=" + year + ";";
+
+            String queryYear = "SELECT " + avgType + ", " + cntType +" FROM " + Constants.TABLE_NAME_YEAR +
+                    " WHERE Year_Num=" + year + ";";
+
+            Cursor cursor = db.rawQuery(queryMonth, null);
+            if (cursor != null && cursor.getCount() > 0) {
+                noMonth = false;
+                cursor.moveToFirst();
+                monthCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
+                monthAvg = cursor.getDouble(cursor.getColumnIndexOrThrow(avgType));
+            }
+            cursor = db.rawQuery(queryYear, null);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                noYear = false;
+                cursor.moveToFirst();
+                yearCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
+                yearAvg = cursor.getDouble(cursor.getColumnIndexOrThrow(avgType));
+            }
+            if (prev == "NULL") {
+                monthAvg = (monthAvg * monthCnt + Float.parseFloat(val)) / (monthCnt + 1);
+                yearAvg = (yearAvg * yearCnt + Float.parseFloat(val)) / (yearCnt + 1);
+            } else {
+                float newVal = Float.parseFloat(val);
+                float prevVal = Float.parseFloat(prev);
+                monthAvg = monthAvg + (newVal - prevVal) / (monthCnt);
+                yearAvg = yearAvg + (newVal - prevVal) / (yearCnt);
+            }
+
+            String monthCol = "Month_Num, Year_ID, " + avgType + ", " + cntType;
+            String monthValues = month + ", " + year + ", " + monthAvg + ", " + (monthCnt + 1);
+
+            String yearCol = "Year_Num, " + avgType + ", " + cntType;
+            String yearValues = year + ", " + yearAvg + ", " + (yearCnt + 1);
+
+            String monthInput;
+            if (noMonth) {
+                monthInput = "INSERT INTO " + Constants.TABLE_NAME_MONTH +
+                        " (" + monthCol + ")" + " VALUES (" + monthValues + ");";
+            } else {
+                monthInput = "UPDATE " + Constants.TABLE_NAME_MONTH +
+                        " SET " +
+                        avgType + " = " + monthAvg + ", " +
+                        cntType + " = " + (monthCnt + 1) +
+                        " WHERE Month_Num = " + month +
+                        " AND Year_ID = " + year + ";";
+            }
+            db.execSQL(monthInput);
+
+            String yearInput;
+            if (noYear) {
+                yearInput = "INSERT INTO " + Constants.TABLE_NAME_YEAR +
+                        " (" + yearCol + ")" + " VALUES (" + yearValues + ");";
+            } else {
+                yearInput = "UPDATE " + Constants.TABLE_NAME_YEAR +
+                        " SET " +
+                        avgType + " = " + yearAvg + ", " +
+                        cntType + " = " + (yearCnt + 1) +
+                        " WHERE Year_Num = " + year + ";";
+            }
+            db.execSQL(yearInput);
         }
-        db.execSQL(yearInput);
     }
 
     public String[] getDailyScenario() {
@@ -368,16 +505,145 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return input;
     }
 
+    public void saveNotificationSettings(String fruit, String vegetable, String sugar, String exercise) {
+        //blank means 5
+        //0 means disable
+        //any other number is that number of days
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String insertSettings = "INSERT OR IGNORE INTO settingstable (settings_id) VALUES (1 );";
+        db.execSQL(insertSettings);
+
+        String updateSettings = "UPDATE settingstable SET settings_id=1, fruit_notify=" + fruit + ", vegetable_notify=" + vegetable + ", sugar_notify=" + sugar + ", exercise_notify=" + exercise + ";";
+        db.execSQL(updateSettings);
+    }
+
+    public Integer checkNotificationTriggerFruit(int monthNum) {
+        Integer[] input  = new Integer[9];
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer counter = 0;
+        Integer compare = 0;
+
+        Cursor cursor = db.rawQuery("SELECT (Fruit_Notify) FROM settingstable;", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                compare = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("Fruit_Notify")));
+            } while (cursor.moveToNext());
+        }
+
+        Cursor cursor2 = db.rawQuery("SELECT (Fruit) FROM daytable WHERE Month_Num = "+Integer.toString(monthNum)+" ORDER BY Day_Num DESC LIMIT " + Integer.toString(compare) + ";", null);
+
+        if (cursor2.moveToFirst()) {
+            do {
+                if(cursor2.getString(cursor2.getColumnIndexOrThrow("Fruit")).equals("false")) {
+                    counter++;
+                }
+            } while (cursor2.moveToNext());
+        }
+        if (counter >= compare && compare != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public Integer checkNotificationTriggerVegetable(int monthNum) {
+        Integer[] input  = new Integer[9];
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer counter = 0;
+        Integer compare = 0;
+
+        Cursor cursor = db.rawQuery("SELECT (Vegetable_Notify) FROM settingstable;", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                compare = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("Vegetable_Notify")));
+            } while (cursor.moveToNext());
+        }
+
+        Cursor cursor2 = db.rawQuery("SELECT (Vegetable) FROM daytable WHERE Month_Num = "+Integer.toString(monthNum)+" ORDER BY Day_Num DESC LIMIT " + Integer.toString(compare) + ";", null);
+
+        if (cursor2.moveToFirst()) {
+            do {
+                if(cursor2.getString(cursor2.getColumnIndexOrThrow("Vegetable")).equals("false")) {
+                    counter++;
+                }
+            } while (cursor2.moveToNext());
+        }
+        if (counter >= compare && compare != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public Integer checkNotificationTriggerSugar(int monthNum) {
+        Integer[] input  = new Integer[9];
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer counter = 0;
+        Integer compare = 0;
+
+        Cursor cursor = db.rawQuery("SELECT (Sugar_Notify) FROM settingstable;", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                compare = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("Sugar_Notify")));
+            } while (cursor.moveToNext());
+        }
+
+        Cursor cursor2 = db.rawQuery("SELECT (Sugar) FROM daytable WHERE Month_Num = "+Integer.toString(monthNum)+" ORDER BY Day_Num DESC LIMIT " + Integer.toString(compare) + ";", null);
+
+        if (cursor2.moveToFirst()) {
+            do {
+                if(cursor2.getString(cursor2.getColumnIndexOrThrow("Sugar")).equals("true")) {
+                    counter++;
+                }
+            } while (cursor2.moveToNext());
+        }
+        if (counter >= compare && compare != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public Integer checkNotificationTriggerExercise(int monthNum) {
+        Integer[] input  = new Integer[9];
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer counter = 0;
+        Integer compare = 0;
+
+        Cursor cursor = db.rawQuery("SELECT (Exercise_Notify) FROM settingstable;", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                compare = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow("Exercise_Notify")));
+            } while (cursor.moveToNext());
+        }
+
+        Cursor cursor2 = db.rawQuery("SELECT (Exercise) FROM daytable WHERE Month_Num = "+Integer.toString(monthNum)+" ORDER BY Day_Num DESC LIMIT " + Integer.toString(compare) + ";", null);
+
+        if (cursor2.moveToFirst()) {
+            do {
+                if(Integer.parseInt(cursor2.getString(cursor2.getColumnIndexOrThrow("Exercise"))) == 0) {
+                    counter++;
+                }
+            } while (cursor2.moveToNext());
+        }
+        if (counter >= compare && compare != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
     public String[] retrievePrevScenario(){
         String[] input  = new String[2];
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT Object_ID, Scenario FROM " + Constants.TABLE_SCENARIO + " WHERE Scenario_ID = -1", null);
-            if (cursor.moveToFirst()) {
-                do {
-                    input[0] = cursor.getString(cursor.getColumnIndexOrThrow("Object_ID"));
-                    input[1] = cursor.getString(cursor.getColumnIndexOrThrow("Scenario"));
-                } while (cursor.moveToNext());
-            }
+        if (cursor.moveToFirst()) {
+            do {
+                input[0] = cursor.getString(cursor.getColumnIndexOrThrow("Object_ID"));
+                input[1] = cursor.getString(cursor.getColumnIndexOrThrow("Scenario"));
+            } while (cursor.moveToNext());
+        }
         return input;
     }
 
@@ -394,6 +660,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         player.magicDamage = cursor.getInt(cursor.getColumnIndexOrThrow("Magic_Damage"));
         player.manaRechargeRate= cursor.getInt(cursor.getColumnIndexOrThrow("Mana_Recharge"));
         player.numberOfTurns = cursor.getInt(cursor.getColumnIndexOrThrow("Num_Turns"));
+        player.damgeMod = cursor.getInt(cursor.getColumnIndexOrThrow("Damage_Mod"));
         //}
         return player;
     }
@@ -428,7 +695,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "Exp = " + player.exp + ", " +
                 "Magic_Damage = " + player.magicDamage + ", " +
                 "Mana_Recharge = " + player.manaRechargeRate + ", " +
-                "Num_Turns = " + player.numberOfTurns + " " +
+                "Num_Turns = " + player.numberOfTurns + ", " +
+                "Damage_Mod = " + player.damgeMod + " " +
                 "WHERE  Player_ID = 0;";
         db.execSQL(Input);
     }
@@ -468,11 +736,34 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return enemy;
     }
 
-    public void updateNumTurns(int turns){
+    public void updateNumTurns(int turns, boolean add){
+        SQLiteDatabase db = this.getReadableDatabase();
+        if(add){
+            String input = "SELECT Num_Turns FROM " + Constants.TABLE_PLAYER +
+                    " WHERE Player_ID = 0;";
+            Cursor cursor = db.rawQuery(input, null);
+            cursor.moveToFirst();
+            int num = cursor.getInt(cursor.getColumnIndexOrThrow("Num_Turns"));
+            String Input = "UPDATE " + Constants.TABLE_PLAYER +
+                    " SET " +
+                    "Num_Turns = " + (turns + num) +
+                    " WHERE Player_ID = 0";
+            db.execSQL(Input);
+        }
+        else {
+            String Input = "UPDATE " + Constants.TABLE_PLAYER +
+                    " SET " +
+                    "Num_Turns = " + turns +
+                    " WHERE Player_ID = 0";
+            db.execSQL(Input);
+        }
+    }
+
+    public void setDamageMod(int attack){
         SQLiteDatabase db = this.getReadableDatabase();
         String Input = "UPDATE " + Constants.TABLE_PLAYER +
                 " SET " +
-                "Num_Turns = " + turns +
+                "Damage_Mod = " + attack +
                 " WHERE Player_ID = 0";
         db.execSQL(Input);
     }
@@ -494,4 +785,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 " WHERE Player_ID = 0";
         db.execSQL(Input);
     }
- }
+    public void updateManaRegen(int regen){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.TABLE_PLAYER, null);
+        cursor.moveToFirst();
+        int mana = cursor.getInt(cursor.getColumnIndexOrThrow("Mana"));
+        int max = cursor.getInt(cursor.getColumnIndexOrThrow("Max_Mana"));
+        mana += regen;
+        if(mana>max){
+            mana = max;
+        }
+        String Input = "UPDATE " + Constants.TABLE_PLAYER +
+                " SET " +
+                "Mana = " + mana +
+                " WHERE Player_ID = 0";
+        db.execSQL(Input);
+    }
+}
