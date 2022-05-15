@@ -178,7 +178,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                         " AND Year_Num = " + year + ";";
                 cursor = db.rawQuery(input, null);
                 String output = "NULL";
-                if (cursor != null && cursor.getCount() > 0){
+                if (cursor != null && cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     output = cursor.getString(cursor.getColumnIndexOrThrow(types.get(i)));
                 }
@@ -441,7 +441,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 yearCnt = cursor.getInt(cursor.getColumnIndexOrThrow(cntType));
                 yearAvg = cursor.getDouble(cursor.getColumnIndexOrThrow(avgType));
             }
-            if (prev == "NULL") {
+            if (prev == null || prev.equals("NULL")) {
                 monthAvg = (monthAvg * monthCnt + Float.parseFloat(val)) / (monthCnt + 1);
                 yearAvg = (yearAvg * yearCnt + Float.parseFloat(val)) / (yearCnt + 1);
             } else {

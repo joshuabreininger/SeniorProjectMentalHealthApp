@@ -429,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
             db.updateManaRegen(10);
         }
 
-        if(exerciseMin>=120 && (vegetable || fruit)){
+        if(exerciseMin>=30 && (vegetable || fruit)){
             db.updateNumTurns(1,true);
         }
 
@@ -1294,6 +1294,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveExercise(){
         String exerciseTime = exerciseInput_edittext.getText().toString();
+        Log.d("TEST Exercise", exerciseTime);
         items.add(exerciseTime);
         dataSetTypes.add("Exercise");
     }
